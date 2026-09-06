@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  repository-integrity:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check required repository files
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f README.md
+          test -f LICENSE
+          test -f SECURITY.md
+          test -f CONTRIBUTING.md
+          test -f CHANGELOG.md
+          test -f spec/versions/v2.6/HYPER-QUANT_MASTER_SPEC_v2.6.md
+          test -f spec/reviews/v2.6/v2.6-adversarial-review.md
+
+      - name: Detect obvious secret files
+        shell: bash
+        run: |
+          set -euo pipefail
+          ! find . -type f \( -name '*.pem' -o -name '*.key' -o -name '*.p12' -o -name '*.pfx' \) -not -path './.git/*' | grep -q .
+
+      - name: Verify no v2.3/v2.4/v2.5 identity drift in current candidate
+        shell: bash
+        run: |
+          set -euo pipefail
+          ! grep -nE 'HYPER-QUANT MASTER SPEC v2\.(3|4|5)|^\*\*Version:\*\* 2\.(3|4|5)' spec/versions/v2.6/HYPER-QUANT_MASTER_SPEC_v2.6.md
+
+      - name: Verify v2.6 review state
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -q 'Status.*REVIEW_REQUIRED' spec/versions/v2.6/HYPER-QUANT_MASTER_SPEC_v2.6.md
+          grep -q 'Current specification.*v2.6.*REVIEW_REQUIRED' README.md

@@ -1,0 +1,33 @@
+# Dependencies / builds
+node_modules/
+dist/
+build/
+coverage/
+.tmp/
+.cache/
+
+# Local env / secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Runtime and local data
+logs/
+data/local/
+data/raw-private/
+*.sqlite
+*.db
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Generated artifacts
+artifacts/local/
+reports/local/

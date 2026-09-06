@@ -2,6 +2,7 @@
   "name": "@azmisahin-finance/hyper-quant",
   "version": "0.1.0",
   "private": true,
+  "publishConfig": {"provenance": true},
   "description": "Evidence-driven quantitative research, capital-allocation, risk, and execution-safety platform.",
   "license": "GPL-3.0-or-later",
   "engines": {

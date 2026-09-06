@@ -38,6 +38,19 @@ jobs:
           set -euo pipefail
           ! grep -nE 'HYPER-QUANT MASTER SPEC v2\.(3|4|5)|^\*\*Version:\*\* 2\.(3|4|5)' spec/versions/v2.6/HYPER-QUANT_MASTER_SPEC_v2.6.md
 
+      - name: Verify no approved master is present
+        shell: bash
+        run: |
+          set -euo pipefail
+          test ! -f spec/master/HYPER-QUANT_MASTER_SPEC.md
+          grep -q 'Status: NONE APPROVED YET' spec/master/README.md
+
+      - name: Verify implementation scaffold is non-live
+        shell: bash
+        run: |
+          set -euo pipefail
+          ! grep -RniE 'place order|submit order|private key|secret seed' src --exclude='README.md'
+
       - name: Verify v2.6 review state
         shell: bash
         run: |

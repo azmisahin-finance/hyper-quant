@@ -1,0 +1,60 @@
+# Implementation Handoff
+
+## Mission
+
+Build an evidence-driven quantitative research and execution-safety system without assuming that a profitable strategy exists.
+
+The repository is intentionally usable as a starting point for a new engineer, but it is **not** permission to deploy capital.
+
+## Source of authority
+
+Current candidate specification:
+
+`spec/versions/v2.6/HYPER-QUANT_MASTER_SPEC_v2.6.md`
+
+Current status:
+
+`REVIEW_REQUIRED`
+
+No approved production master is present yet.
+
+## First implementation principle
+
+Implement infrastructure and safety boundaries before alpha complexity:
+
+1. deterministic domain types and state machines,
+2. research-trial identity and durable ledger interfaces,
+3. market/account data contracts,
+4. replay/backtest interfaces with realistic cost modeling,
+5. risk and capital-allocation invariants,
+6. venue execution profiles,
+7. reconciliation and protective-exit machinery,
+8. only then strategy logic and live adapters.
+
+## What must not happen in an early implementation
+
+- no live order submission from the current scaffold;
+- no private key in source or environment files committed to Git;
+- no AI-to-signer connection;
+- no automatic production enablement from CI;
+- no automatic promotion from backtest to production;
+- no retry loop that treats an unknown exchange result as a known failure;
+- no local database treated as the authoritative record of live exposure.
+
+## Safe first milestone
+
+A good first milestone is a **read-only / replayable vertical slice** that can ingest normalized events, register a research trial, replay historical data, emit a deterministic decision artifact, and prove that no live-order capability exists.
+
+Only after that milestone and the specification review closure should live execution be considered.
+
+## Review discipline
+
+Every material design change should identify:
+
+- the relevant specification section;
+- the changed invariant;
+- the failure modes added or removed;
+- the test that proves the intended behavior;
+- whether the change affects research validity, risk, execution, security, or release gates.
+
+When evidence is insufficient, stop at `REVIEW_REQUIRED` rather than inventing an assumption.

@@ -32,6 +32,8 @@ export type CampaignFinalRecord = {
   committedTrialCount: number;
   pbo: number;
   dsr: number;
+  dsrMethod: 'CLASSIC_DSR_LS';
+  dsrReturnConvention: 'PER_PERIOD_ARITHMETIC_MEAN_SAMPLE_STDDEV';
   passedSelectionGates: boolean;
   evidenceHash: string;
   recordedAt: string;
@@ -40,9 +42,16 @@ export type CampaignFinalRecord = {
 export type CampaignRecord = CampaignStartRecord | CampaignCandidateRecord | CampaignFinalRecord;
 
 export class ResearchCampaignLedger {
-  private writeQueue: Promise<void> = Promise.resolve();
+  private static readonly writeQueues = new Map<string, Promise<void>>();
 
   constructor(private readonly path: string) {}
+
+  private enqueue<T>(operation: () => Promise<T>): Promise<T> {
+    const previous = ResearchCampaignLedger.writeQueues.get(this.path) ?? Promise.resolve();
+    const current = previous.then(operation, operation);
+    ResearchCampaignLedger.writeQueues.set(this.path, current.then(() => undefined, () => undefined));
+    return current;
+  }
 
   private async records(): Promise<CampaignRecord[]> {
     try {
@@ -67,7 +76,7 @@ export class ResearchCampaignLedger {
   }
 
   async start(record: CampaignStartRecord): Promise<void> {
-    const operation = this.writeQueue.then(async () => {
+    return this.enqueue(async () => {
       const records = await this.records();
       if (records.some((item) => item.kind === 'CAMPAIGN_START' && item.campaignId === record.campaignId)) {
         throw new Error('CAMPAIGN_ID_ALREADY_REGISTERED');
@@ -77,12 +86,10 @@ export class ResearchCampaignLedger {
       }
       await this.append(record);
     });
-    this.writeQueue = operation.then(() => undefined, () => undefined);
-    return operation;
   }
 
   async recordCandidate(record: CampaignCandidateRecord): Promise<void> {
-    const operation = this.writeQueue.then(async () => {
+    return this.enqueue(async () => {
       const records = await this.records();
       const started = records.some((item) => item.kind === 'CAMPAIGN_START' && item.campaignId === record.campaignId);
       if (!started) throw new Error('CAMPAIGN_RECEIPT_REQUIRED');
@@ -91,12 +98,10 @@ export class ResearchCampaignLedger {
       }
       await this.append(record);
     });
-    this.writeQueue = operation.then(() => undefined, () => undefined);
-    return operation;
   }
 
   async finalize(record: CampaignFinalRecord): Promise<void> {
-    const operation = this.writeQueue.then(async () => {
+    return this.enqueue(async () => {
       const records = await this.records();
       const started = records.some((item) => item.kind === 'CAMPAIGN_START' && item.campaignId === record.campaignId);
       if (!started) throw new Error('CAMPAIGN_RECEIPT_REQUIRED');
@@ -105,8 +110,6 @@ export class ResearchCampaignLedger {
       }
       await this.append(record);
     });
-    this.writeQueue = operation.then(() => undefined, () => undefined);
-    return operation;
   }
 
   async getFinal(campaignId: string): Promise<CampaignFinalRecord | undefined> {

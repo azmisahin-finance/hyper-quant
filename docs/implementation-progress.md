@@ -24,6 +24,19 @@
 - Live WebSocket connectivity/reconnect certification
 - External signer isolation and live venue reconciliation
 
+## v2.9 research operating-system hardening
+
+The research ledgers now serialize same-path writers across independent
+in-process ledger instances, so duplicate campaign starts, trial receipts, and
+holdout reservations fail closed instead of racing budget or identity checks.
+Campaign evidence also records the exact DSR return convention
+(`PER_PERIOD_ARITHMETIC_MEAN_SAMPLE_STDDEV`) alongside the DSR method, making
+statistical interpretation explicit and reproducible.
+
+This remains an in-process reference control: cross-process file-locking,
+physical sealed-holdout isolation, and independent external DSR validation are
+still open proof obligations.
+
 No live mutation is authorized by this implementation.
 
 ## v2.9 research campaign orchestration

@@ -4,8 +4,11 @@ export type DsrInput = {
   benchmarkSharpe?: number;
 };
 
+export const DSR_RETURN_CONVENTION = 'PER_PERIOD_ARITHMETIC_MEAN_SAMPLE_STDDEV' as const;
+
 export type DsrResult = {
   method: 'CLASSIC_DSR_LS';
+  returnConvention: typeof DSR_RETURN_CONVENTION;
   sampleCount: number;
   sharpe: number;
   skewness: number;
@@ -95,5 +98,5 @@ export function computeDeflatedSharpeRatio(input: DsrInput): DsrResult {
     ? benchmark
     : benchmark + sharpeStdError * ((1 - gammaEuler) * inverseNormalCdf(1 - 1 / trials) + gammaEuler * inverseNormalCdf(1 - 1 / (trials * Math.E)));
   const dsr = normalCdf((sharpe - expectedMaxSharpe) / sharpeStdError);
-  return { method: 'CLASSIC_DSR_LS', sampleCount: n, sharpe, skewness, kurtosis, expectedMaxSharpe, sharpeStdError, dsr, committedTrialCount: trials };
+  return { method: 'CLASSIC_DSR_LS', returnConvention: DSR_RETURN_CONVENTION, sampleCount: n, sharpe, skewness, kurtosis, expectedMaxSharpe, sharpeStdError, dsr, committedTrialCount: trials };
 }

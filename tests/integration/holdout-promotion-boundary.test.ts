@@ -51,6 +51,23 @@ test('controlled holdout requires a finalized, passing campaign and exact select
   } finally { await rm(root, { recursive: true, force: true }); }
 });
 
+test('same-path holdout ledgers serialize reservations and do not oversubscribe budget', async () => {
+  const root = await mkdtemp(join(tmpdir(), 'hq-holdout-concurrency-'));
+  try {
+    const path = join(root, 'holdout.jsonl');
+    const first = new HoldoutLedger(path, 'ROOT-CONCURRENT', { global: 1, family: 1, lineage: 1 });
+    const second = new HoldoutLedger(path, 'ROOT-CONCURRENT', { global: 1, family: 1, lineage: 1 });
+    const reservation = { programRootId: 'ROOT-CONCURRENT', familyId: 'F1', lineageId: 'L1', scope: 'LINEAGE' as const, units: 1, resultClass: 'PENDING' };
+    await assert.rejects(() => Promise.all([
+      first.reserve(reservation, 'R1', { campaignId: 'C1', candidateId: 'A', selectionEvidenceHash: 'a'.repeat(64) }),
+      second.reserve(reservation, 'R2', { campaignId: 'C2', candidateId: 'B', selectionEvidenceHash: 'b'.repeat(64) }),
+    ]), /(?:GLOBAL|FAMILY|LINEAGE)_HOLDOUT_BUDGET_EXCEEDED/);
+    assert.equal(await first.consumed('GLOBAL'), 1);
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
 test('controlled holdout rejects candidate swap, evidence swap, and raw holdout payloads before consuming budget', async () => {
   const root = await mkdtemp(join(tmpdir(), 'hq-holdout-attacks-'));
   try {

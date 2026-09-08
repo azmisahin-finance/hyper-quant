@@ -19,8 +19,15 @@ export type HoldoutReservation = HoldoutEvaluationInput & { reservationId: strin
 export type HoldoutBudgets = { global: number; family: number; lineage: number };
 
 export class HoldoutLedger {
-  private writeQueue: Promise<void> = Promise.resolve();
+  private static readonly writeQueues = new Map<string, Promise<void>>();
   constructor(private readonly path: string, private readonly governedRootId: string, private readonly budgets: HoldoutBudgets) {}
+
+  private enqueue<T>(operation: () => Promise<T>): Promise<T> {
+    const previous = HoldoutLedger.writeQueues.get(this.path) ?? Promise.resolve();
+    const current = previous.then(operation, operation);
+    HoldoutLedger.writeQueues.set(this.path, current.then(() => undefined, () => undefined));
+    return current;
+  }
 
   private async records(): Promise<HoldoutEvaluation[]> {
     try {
@@ -65,7 +72,7 @@ export class HoldoutLedger {
   }
 
   async reserve(input: HoldoutEvaluationInput, reservationId: string, context?: HoldoutReservationContext): Promise<HoldoutReservation> {
-    const operation = this.writeQueue.then(async () => {
+    return this.enqueue(async () => {
       await this.validateBudget(input);
       if (!reservationId) throw new Error('INVALID_HOLDOUT_RESERVATION');
       const existing = (await this.records()).some((item) => (item as { reservationId?: string }).reservationId === reservationId);
@@ -74,12 +81,10 @@ export class HoldoutLedger {
       await this.appendRecord(reservation);
       return reservation;
     });
-    this.writeQueue = operation.then(() => undefined, () => undefined);
-    return operation;
   }
 
   async finalizeReservation(reservationId: string, resultClass: HoldoutResultClass): Promise<void> {
-    const operation = this.writeQueue.then(async () => {
+    return this.enqueue(async () => {
       const records = await this.records();
       const reservation = records.find((item) => (item as { kind?: string; reservationId?: string }).kind === 'HOLDOUT_RESERVATION' && (item as { reservationId?: string }).reservationId === reservationId) as HoldoutReservation | undefined;
       if (!reservation) throw new Error('HOLDOUT_RESERVATION_NOT_FOUND');
@@ -87,16 +92,13 @@ export class HoldoutLedger {
       if (finalized) throw new Error('HOLDOUT_RESERVATION_ALREADY_FINAL');
       await this.appendRecord({ kind: 'HOLDOUT_FINAL', reservationId, programRootId: reservation.programRootId, familyId: reservation.familyId, lineageId: reservation.lineageId, scope: reservation.scope, units: reservation.units, resultClass, campaignId: reservation.campaignId, candidateId: reservation.candidateId, selectionEvidenceHash: reservation.selectionEvidenceHash, timestamp: new Date().toISOString() });
     });
-    this.writeQueue = operation.then(() => undefined, () => undefined);
-    return operation;
   }
 
   async evaluate(input: HoldoutEvaluationInput): Promise<void> {
-    const operation = this.writeQueue.then(async () => {
+    const operation = this.enqueue(async () => {
       await this.validateBudget(input);
       await this.appendRecord({ ...input, programRootId: this.governedRootId, kind: 'HOLDOUT_FINAL', timestamp: new Date().toISOString() });
     });
-    this.writeQueue = operation.catch(() => undefined);
     return operation;
   }
 

@@ -33,12 +33,37 @@ const returnsB = Array.from({ length: 24 }, (_, i) => (i < 12 ? 0.009 : 0.004));
     assert.equal(result.committedTrialCount, 2);
     assert.equal(result.selectedCandidateId, 'B');
     assert.equal(result.diagnostics.dsr.committedTrialCount, 2);
+    assert.equal(result.diagnostics.dsr.returnConvention, 'PER_PERIOD_ARITHMETIC_MEAN_SAMPLE_STDDEV');
     assert.equal(result.passedSelectionGates, true);
     assert.match(result.evidenceHash, /^[0-9a-f]{64}$/);
     assert.equal(await campaignLedger.isFinal('C1'), true);
     const ledgerText = await readFile(join(root, 'campaigns.jsonl'), 'utf8');
     assert.match(ledgerText, /CAMPAIGN_START/);
     assert.match(ledgerText, /CAMPAIGN_FINAL/);
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
+test('campaign and trial ledgers serialize same-path concurrent writers', async () => {
+  const root = await mkdtemp(join(tmpdir(), 'hq-campaign-concurrency-'));
+  try {
+    const campaignPath = join(root, 'campaigns.jsonl');
+    const trialPath = join(root, 'trials.jsonl');
+    const campaignA = new ResearchCampaignLedger(campaignPath);
+    const campaignB = new ResearchCampaignLedger(campaignPath);
+    const trialA = new ResearchTrialLedger(trialPath);
+    const trialB = new ResearchTrialLedger(trialPath);
+    await assert.rejects(() => Promise.all([
+      campaignA.start({ kind: 'CAMPAIGN_START', campaignId: 'CONCURRENT', researchProgramId: 'P-CAMPAIGN', selectionPolicyHash: 'selection-v1', candidateIds: ['A', 'B'], createdAt: new Date(0).toISOString() }),
+      campaignB.start({ kind: 'CAMPAIGN_START', campaignId: 'CONCURRENT', researchProgramId: 'P-CAMPAIGN', selectionPolicyHash: 'selection-v1', candidateIds: ['A', 'B'], createdAt: new Date(0).toISOString() }),
+    ]), /CAMPAIGN_ID_ALREADY_REGISTERED/);
+    await assert.rejects(() => Promise.all([
+      trialA.registerBeforeRun(receipt('CONCURRENT-TRIAL')),
+      trialB.registerBeforeRun(receipt('CONCURRENT-TRIAL')),
+    ]), /TRIAL_ID_ALREADY_REGISTERED/);
+    assert.equal((await readFile(campaignPath, 'utf8')).trim().split('\n').length, 1);
+    assert.equal((await readFile(trialPath, 'utf8')).trim().split('\n').length, 1);
   } finally {
     await rm(root, { recursive: true, force: true });
   }

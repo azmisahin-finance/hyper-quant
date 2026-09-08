@@ -5,7 +5,7 @@ This file is the resumable operational state for AI agents and operators. Update
 ## Current project state
 
 - Repository: `azmisahin-finance/hyper-quant`
-- Current branch: `azmisahin-stakeholder-master-plan`
+- Current branch: `azmisahin-first-evidence-campaign`
 - Spec version: `v2.9`
 - Review status: `REVIEW_REQUIRED`
 - Live trading status: `PROHIBITED`
@@ -13,8 +13,8 @@ This file is the resumable operational state for AI agents and operators. Update
 
 ## Current objective
 
-Maintain the canonical stakeholder master execution plan and task register
-through safe, evidence-backed project completion.
+Implement the first deterministic evidence increment for BtcTurk `BTC/TRY`,
+read-only/non-live, without changing the review gate.
 
 ## Completion status
 
@@ -27,6 +27,7 @@ through safe, evidence-backed project completion.
 - [x] Serialize same-path research ledger writers and persist DSR convention
 - [x] Add canonical stakeholder master execution plan, GOV-01..GOV-12 register,
   phase gates, role responsibilities, reporting cadence, and handoff checklist
+- [x] Add the RPT-01/RPT-02 deterministic report contract and fixture runner
 - [ ] Obtain independent human/adversarial review before any production claim
 
 ## Last validated baseline
@@ -36,10 +37,8 @@ through safe, evidence-backed project completion.
 
 ## Immediate next actions
 
-1. Use `docs/stakeholder-master-execution-plan.md` as the canonical backlog and
-   close GOV-01..GOV-12 only with durable evidence and accountable review.
-2. Obtain independent review of the research ledger concurrency, DSR
-   convention, and specification identity.
+1. Obtain independent review of the RPT-01/RPT-02 contract and fixture outputs.
+2. Implement the remaining report register entries only with durable evidence.
 3. Keep this ledger updated whenever work continues.
 4. Use `node scripts/agent-status.mjs` as the default status command for the next agent.
 

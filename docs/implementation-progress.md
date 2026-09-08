@@ -50,3 +50,17 @@ The non-live implementation now requires a finalized passing campaign before hol
 ### v2.9 full research evidence engine
 
 The reference implementation now constructs a single tamper-evident evidence package from finalized campaign selection, controlled holdout evidence, selected return series, walk-forward validation, CSCV/PBO, PSR/DSR, regime coverage, cost stress, and the statistical promotion decision. A durable evidence ledger prevents duplicate final packages for a campaign and serializes concurrent writes. Final holdout physical/process isolation, live venue reconciliation, and signer isolation remain proof obligations outside the non-live reference boundary.
+
+### First evidence register
+
+The first concrete evidence increment is now a deterministic fixture for
+BtcTurk `BTC/TRY` in `READ_ONLY_NON_LIVE` scope. It emits the partial
+`RPT-01 Baseline Research Campaign Report` and `RPT-02 Reproducibility and Data
+Lineage Certificate`, including input hashes, result hashes, lineage metadata,
+and explicit `COMPLETED`, `NO_TRADE`, or `FAIL` outcomes. This is not market
+profitability evidence and does not establish live connectivity.
+
+The complete report register and current statuses are in
+[`docs/evidence-reports.md`](evidence-reports.md). `RPT-03`, `RPT-04`,
+`RPT-05`, `RPT-06`, `RPT-07`, `RPT-09`, and `RPT-11` remain `OPEN`;
+`RPT-08`, `RPT-10`, and `RPT-12` remain `BLOCKED`.

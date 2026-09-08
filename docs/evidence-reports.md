@@ -8,7 +8,7 @@ submit orders, move capital, or authorize promotion.
 |---|---|---|
 | RPT-01 | Baseline Research Campaign Report | PARTIAL |
 | RPT-02 | Reproducibility and Data Lineage Certificate | PARTIAL |
-| RPT-03 | Market Data Completeness Report | OPEN |
+| RPT-03 | Independent Statistical Evidence Package | PARTIAL |
 | RPT-04 | Replay Determinism Certificate | OPEN |
 | RPT-05 | Execution Cost and Slippage Report | OPEN |
 | RPT-06 | Walk-Forward Validation Report | OPEN |
@@ -23,3 +23,12 @@ submit orders, move capital, or authorize promotion.
 repository-native fixture runner. Its `COMPLETED`, `NO_TRADE`, and `FAIL`
 outcomes are research outcomes only and must not be interpreted as profitability
 or live-connectivity evidence.
+
+`buildIndependentStatisticalEvidenceReport` in
+`src/research/independent-statistics.ts` is the RPT-03 verifier. It derives the
+committed trial count from registered trial identities, binds the selected return
+hash to the campaign candidate record, independently recomputes DSR and PSR
+using the persisted `PER_PERIOD_ARITHMETIC_MEAN_SAMPLE_STDDEV` convention, and
+emits deterministic input, result, lineage, and evidence hashes. It reports
+`COMPLETED`, `FAIL`, or `BLOCKED`; none is a promotion or live-trading
+authorization.

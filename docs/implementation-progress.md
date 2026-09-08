@@ -14,6 +14,9 @@
 - Walk-forward validation, CSCV/PBO diagnostic and regime coverage
 - Deflated Sharpe Ratio (classic DSR-LS approximation) computed from the selected return series and committed trial count
 - Search-campaign diagnostics binding selected candidate, CSCV/PBO, DSR and a reproducible evidence hash
+- Independent RPT-03 statistical evidence verification bound to exact campaign
+  statistics, derived trial identity count, persisted DSR/PSR return convention,
+  deterministic lineage, and input/result/evidence hashes
 
 ### Remaining proof obligations
 

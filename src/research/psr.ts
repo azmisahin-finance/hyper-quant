@@ -3,8 +3,11 @@ export type PsrInput = {
   benchmarkSharpe?: number;
 };
 
+export const PSR_RETURN_CONVENTION = 'PER_PERIOD_ARITHMETIC_MEAN_SAMPLE_STDDEV' as const;
+
 export type PsrResult = {
   method: 'PSR_LOPEZ_DE_PRADO_APPROX';
+  returnConvention: typeof PSR_RETURN_CONVENTION;
   sampleCount: number;
   sharpe: number;
   benchmarkSharpe: number;
@@ -63,5 +66,5 @@ export function computeProbabilisticSharpeRatio(input: PsrInput): PsrResult {
   if (!(variance > 0) || !Number.isFinite(variance)) throw new Error('INVALID_PSR_VARIANCE');
   const sharpeStdError = Math.sqrt(variance);
   const psr = normalCdf((sharpe - benchmarkSharpe) / sharpeStdError);
-  return { method: 'PSR_LOPEZ_DE_PRADO_APPROX', sampleCount: input.returns.length, sharpe, benchmarkSharpe, skewness, kurtosis, sharpeStdError, psr };
+  return { method: 'PSR_LOPEZ_DE_PRADO_APPROX', returnConvention: PSR_RETURN_CONVENTION, sampleCount: input.returns.length, sharpe, benchmarkSharpe, skewness, kurtosis, sharpeStdError, psr };
 }

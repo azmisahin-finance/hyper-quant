@@ -20,7 +20,7 @@ export type EvidenceReportIndexEntry = {
 export const EVIDENCE_REPORT_INDEX: readonly EvidenceReportIndexEntry[] = [
   { reportId: 'RPT-01', name: 'Baseline Research Campaign Report', status: 'PARTIAL' },
   { reportId: 'RPT-02', name: 'Reproducibility and Data Lineage Certificate', status: 'PARTIAL' },
-  { reportId: 'RPT-03', name: 'Market Data Completeness Report', status: 'OPEN' },
+  { reportId: 'RPT-03', name: 'Independent Statistical Evidence Package', status: 'PARTIAL' },
   { reportId: 'RPT-04', name: 'Replay Determinism Certificate', status: 'OPEN' },
   { reportId: 'RPT-05', name: 'Execution Cost and Slippage Report', status: 'OPEN' },
   { reportId: 'RPT-06', name: 'Walk-Forward Validation Report', status: 'OPEN' },

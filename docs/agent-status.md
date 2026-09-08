@@ -5,7 +5,7 @@ This file is the resumable operational state for AI agents and operators. Update
 ## Current project state
 
 - Repository: `azmisahin-finance/hyper-quant`
-- Current branch: `azmisahin-first-evidence-campaign`
+- Current branch: `azmisahin-rpt-03-independent-statistics`
 - Spec version: `v2.9`
 - Review status: `REVIEW_REQUIRED`
 - Live trading status: `PROHIBITED`
@@ -13,7 +13,7 @@ This file is the resumable operational state for AI agents and operators. Update
 
 ## Current objective
 
-Implement the first deterministic evidence increment for BtcTurk `BTC/TRY`,
+Implement RPT-03 independent statistical evidence for BtcTurk `BTC/TRY`,
 read-only/non-live, without changing the review gate.
 
 ## Completion status
@@ -28,6 +28,8 @@ read-only/non-live, without changing the review gate.
 - [x] Add canonical stakeholder master execution plan, GOV-01..GOV-12 register,
   phase gates, role responsibilities, reporting cadence, and handoff checklist
 - [x] Add the RPT-01/RPT-02 deterministic report contract and fixture runner
+- [x] Add RPT-03 independent DSR/PSR recomputation, derived trial count,
+  persisted convention, deterministic lineage, and explicit outcomes
 - [ ] Obtain independent human/adversarial review before any production claim
 
 ## Last validated baseline
@@ -37,7 +39,7 @@ read-only/non-live, without changing the review gate.
 
 ## Immediate next actions
 
-1. Obtain independent review of the RPT-01/RPT-02 contract and fixture outputs.
+1. Obtain independent review of the RPT-03 contract and fixture outputs.
 2. Implement the remaining report register entries only with durable evidence.
 3. Keep this ledger updated whenever work continues.
 4. Use `node scripts/agent-status.mjs` as the default status command for the next agent.

@@ -26,6 +26,7 @@ export type CampaignFinalRecord = {
   kind: 'CAMPAIGN_FINAL';
   campaignId: string;
   researchProgramId: string;
+  selectionPolicyHash: string;
   selectedCandidateId: string;
   selectedCandidateIndex: number;
   committedTrialCount: number;
@@ -108,7 +109,12 @@ export class ResearchCampaignLedger {
     return operation;
   }
 
+  async getFinal(campaignId: string): Promise<CampaignFinalRecord | undefined> {
+    const records = await this.records();
+    return records.find((item): item is CampaignFinalRecord => item.kind === 'CAMPAIGN_FINAL' && item.campaignId === campaignId);
+  }
+
   async isFinal(campaignId: string): Promise<boolean> {
-    return (await this.records()).some((item) => item.kind === 'CAMPAIGN_FINAL' && item.campaignId === campaignId);
+    return (await this.getFinal(campaignId)) !== undefined;
   }
 }

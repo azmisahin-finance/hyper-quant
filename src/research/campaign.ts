@@ -156,7 +156,7 @@ export class ResearchCampaignRunner {
         passedSelectionGates,
         evidenceHash,
       };
-      await this.campaignLedger.finalize({ kind: 'CAMPAIGN_FINAL', campaignId: spec.campaignId, researchProgramId: spec.researchProgramId, selectedCandidateId: result.selectedCandidateId, selectedCandidateIndex: result.selectedCandidateIndex, committedTrialCount, pbo: diagnostics.pboCscv.pbo, dsr: diagnostics.dsr.dsr, passedSelectionGates, evidenceHash, recordedAt: new Date().toISOString() });
+      await this.campaignLedger.finalize({ kind: 'CAMPAIGN_FINAL', campaignId: spec.campaignId, researchProgramId: spec.researchProgramId, selectionPolicyHash: spec.selectionPolicyHash, selectedCandidateId: result.selectedCandidateId, selectedCandidateIndex: result.selectedCandidateIndex, committedTrialCount, pbo: diagnostics.pboCscv.pbo, dsr: diagnostics.dsr.dsr, passedSelectionGates, evidenceHash, recordedAt: new Date().toISOString() });
       return result;
     });
     this.queue = operation.then(() => undefined, () => undefined);

@@ -14,7 +14,8 @@ export type HoldoutEvaluation = {
 };
 
 export type HoldoutEvaluationInput = Omit<HoldoutEvaluation, 'timestamp'>;
-export type HoldoutReservation = HoldoutEvaluationInput & { reservationId: string; kind: 'HOLDOUT_RESERVATION' };
+export type HoldoutReservationContext = { campaignId: string; candidateId: string; selectionEvidenceHash: string };
+export type HoldoutReservation = HoldoutEvaluationInput & { reservationId: string; kind: 'HOLDOUT_RESERVATION'; campaignId?: string; candidateId?: string; selectionEvidenceHash?: string; holdoutEvidenceHash?: string };
 export type HoldoutBudgets = { global: number; family: number; lineage: number };
 
 export class HoldoutLedger {
@@ -63,13 +64,13 @@ export class HoldoutLedger {
     if (currentLineage + input.units > this.budgets.lineage) throw new Error('LINEAGE_HOLDOUT_BUDGET_EXCEEDED');
   }
 
-  async reserve(input: HoldoutEvaluationInput, reservationId: string): Promise<HoldoutReservation> {
+  async reserve(input: HoldoutEvaluationInput, reservationId: string, context?: HoldoutReservationContext): Promise<HoldoutReservation> {
     const operation = this.writeQueue.then(async () => {
       await this.validateBudget(input);
       if (!reservationId) throw new Error('INVALID_HOLDOUT_RESERVATION');
       const existing = (await this.records()).some((item) => (item as { reservationId?: string }).reservationId === reservationId);
       if (existing) throw new Error('HOLDOUT_RESERVATION_ALREADY_EXISTS');
-      const reservation: HoldoutReservation = { kind: 'HOLDOUT_RESERVATION', reservationId, ...input };
+      const reservation: HoldoutReservation = { kind: 'HOLDOUT_RESERVATION', reservationId, ...input, ...context };
       await this.appendRecord(reservation);
       return reservation;
     });
@@ -84,7 +85,7 @@ export class HoldoutLedger {
       if (!reservation) throw new Error('HOLDOUT_RESERVATION_NOT_FOUND');
       const finalized = records.some((item) => (item as { kind?: string; reservationId?: string }).kind === 'HOLDOUT_FINAL' && (item as { reservationId?: string }).reservationId === reservationId);
       if (finalized) throw new Error('HOLDOUT_RESERVATION_ALREADY_FINAL');
-      await this.appendRecord({ kind: 'HOLDOUT_FINAL', reservationId, programRootId: reservation.programRootId, familyId: reservation.familyId, lineageId: reservation.lineageId, scope: reservation.scope, units: reservation.units, resultClass, timestamp: new Date().toISOString() });
+      await this.appendRecord({ kind: 'HOLDOUT_FINAL', reservationId, programRootId: reservation.programRootId, familyId: reservation.familyId, lineageId: reservation.lineageId, scope: reservation.scope, units: reservation.units, resultClass, campaignId: reservation.campaignId, candidateId: reservation.candidateId, selectionEvidenceHash: reservation.selectionEvidenceHash, timestamp: new Date().toISOString() });
     });
     this.writeQueue = operation.then(() => undefined, () => undefined);
     return operation;
@@ -101,6 +102,10 @@ export class HoldoutLedger {
 
   async verifyRootContinuity(): Promise<boolean> {
     return (await this.records()).every((item) => item.programRootId === this.governedRootId);
+  }
+
+  governedRootIdForVerification(): string {
+    return this.governedRootId;
   }
 
   static deriveGovernedRoot(policyHash: string, createdAt: string): string {

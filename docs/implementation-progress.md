@@ -29,3 +29,7 @@ No live mutation is authorized by this implementation.
 ## v2.9 research campaign orchestration
 
 The reference implementation now contains a durable non-live `ResearchCampaignRunner` and campaign ledger. Candidate trials are receipted before compute, committed trial count is derived from the trial ledger, candidate selection is deterministic, and campaign-level CSCV/PBO/DSR diagnostics plus an evidence hash are persisted. Holdout execution remains outside the search campaign and is not consumed before candidate selection.
+
+### v2.9 controlled holdout / promotion boundary
+
+The non-live implementation now requires a finalized passing campaign before holdout evaluation, binds the selected candidate and selection evidence to the holdout reservation/evidence hash, prevents raw holdout-shaped payloads from crossing the opaque result boundary, and refuses to construct promotion evidence from FAIL/INCONCLUSIVE holdout results. Physical sealed-holdout storage/process isolation and post-holdout adaptive-search sealing remain open proof obligations.

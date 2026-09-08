@@ -13,6 +13,7 @@
 - Added deterministic chaos-contract and test/production capability-parity release gates.
 - Implemented a non-live TypeScript mutation coordinator scaffold and deterministic TOCTOU tests; no venue adapter or signing capability is present.
 - Added executable research-integrity, statistical, holdout-ledger, aggregate-exposure, promotion-policy, chaos-registry, and capability-parity reference controls with adversarial tests.
+- Added controlled post-selection holdout boundary and promotion-evidence binding; holdout evaluation requires frozen campaign selection, exact evidence identity, pre-compute reservation, opaque summaries, and a PASS result for promotion evidence.
 
 ## v2.6 — Review candidate — 2026-09-06
 

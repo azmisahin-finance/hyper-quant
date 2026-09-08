@@ -31,3 +31,7 @@ The BtcTurk implementation follows the documented public endpoints for exchange 
 The next implementation slice is now executable: historical market bars are validated for strict timestamp ordering, features are computed using only the prefix available at each decision time, purged/embargoed time-series splits enforce leakage boundaries, and a deterministic non-live baseline backtest applies signals only on a later execution bar with explicit fee/slippage costs and optional bar latency.
 
 The baseline mean-reversion strategy is a falsification/continuity benchmark only. It is not a promoted strategy and its results do not constitute evidence of economic edge. Statistical promotion remains gated by the existing statistical evidence controls and, for final out-of-sample evaluation, by the holdout ledger and research-trial governance.
+
+## Research governance vertical slice
+
+The v2.9 reference implementation now includes a `ResearchRunner` that enforces write-before-run trial registration, executable dependency and artifact identity checks, committed-ledger trial counts, statistical promotion evidence checks, and durable terminal outcomes. Final holdout evaluation uses a durable reservation before compute and a terminalization record after compute so budget is consumed before the evaluation can proceed. These are non-live governance primitives; they do not grant promotion or venue authority.

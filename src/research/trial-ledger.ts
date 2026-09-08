@@ -54,7 +54,14 @@ export class ResearchTrialLedger {
     const records = await this.lines();
     const registered = records.some((item) => (item as { kind?: string; trialId?: string }).kind === 'TRIAL_RECEIPT' && (item as { trialId?: string }).trialId === outcome.trialId);
     if (!registered) throw new Error('TRIAL_RECEIPT_REQUIRED_BEFORE_OUTCOME');
+    const alreadyTerminal = records.some((item) => (item as { kind?: string; trialId?: string }).kind === 'TRIAL_OUTCOME' && (item as { trialId?: string }).trialId === outcome.trialId);
+    if (alreadyTerminal) throw new Error('TRIAL_OUTCOME_ALREADY_RECORDED');
     await this.append({ kind: 'TRIAL_OUTCOME', ...outcome });
+  }
+
+  async countRegisteredTrials(researchProgramId: string): Promise<number> {
+    const records = await this.lines();
+    return records.filter((item) => (item as { kind?: string; researchProgramId?: string }).kind === 'TRIAL_RECEIPT' && (item as { researchProgramId?: string }).researchProgramId === researchProgramId).length;
   }
 
   async hasReceipt(trialId: string): Promise<boolean> {

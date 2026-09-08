@@ -14,6 +14,7 @@ export type HoldoutEvaluation = {
 };
 
 export type HoldoutEvaluationInput = Omit<HoldoutEvaluation, 'timestamp'>;
+export type HoldoutReservation = HoldoutEvaluationInput & { reservationId: string; kind: 'HOLDOUT_RESERVATION' };
 export type HoldoutBudgets = { global: number; family: number; lineage: number };
 
 export class HoldoutLedger {
@@ -34,28 +35,65 @@ export class HoldoutLedger {
   async consumed(scope: HoldoutScope, familyId?: string, lineageId?: string): Promise<number> {
     const records = await this.records();
     return records.filter((item) => {
+      const candidate = item as HoldoutEvaluation & { kind?: string; reservationId?: string };
+      const budgetRecord = candidate.kind === 'HOLDOUT_RESERVATION' || (candidate.kind === 'HOLDOUT_FINAL' && !candidate.reservationId) || candidate.kind === undefined;
+      if (!budgetRecord) return false;
       if (scope === 'GLOBAL') return true;
       if (scope === 'FAMILY') return item.familyId === familyId;
       return item.familyId === familyId && item.lineageId === lineageId;
     }).reduce((sum, item) => sum + item.units, 0);
   }
 
+  private async appendRecord(record: unknown): Promise<void> {
+    await mkdir(dirname(this.path), { recursive: true });
+    await appendFile(this.path, JSON.stringify(record) + '\n', 'utf8');
+    const handle = await open(this.path, 'r+');
+    try { await handle.sync(); } finally { await handle.close(); }
+  }
+
+  private async validateBudget(input: HoldoutEvaluationInput): Promise<void> {
+    if (input.programRootId !== this.governedRootId) throw new Error('HOLDOUT_PROGRAM_ROOT_MISMATCH');
+    if (!Number.isInteger(input.units) || input.units <= 0) throw new Error('INVALID_HOLDOUT_UNITS');
+    if (!input.familyId || !input.lineageId) throw new Error('INVALID_HOLDOUT_TAXONOMY');
+    const currentGlobal = await this.consumed('GLOBAL');
+    const currentFamily = await this.consumed('FAMILY', input.familyId);
+    const currentLineage = await this.consumed('LINEAGE', input.familyId, input.lineageId);
+    if (currentGlobal + input.units > this.budgets.global) throw new Error('GLOBAL_HOLDOUT_BUDGET_EXCEEDED');
+    if (currentFamily + input.units > this.budgets.family) throw new Error('FAMILY_HOLDOUT_BUDGET_EXCEEDED');
+    if (currentLineage + input.units > this.budgets.lineage) throw new Error('LINEAGE_HOLDOUT_BUDGET_EXCEEDED');
+  }
+
+  async reserve(input: HoldoutEvaluationInput, reservationId: string): Promise<HoldoutReservation> {
+    const operation = this.writeQueue.then(async () => {
+      await this.validateBudget(input);
+      if (!reservationId) throw new Error('INVALID_HOLDOUT_RESERVATION');
+      const existing = (await this.records()).some((item) => (item as { reservationId?: string }).reservationId === reservationId);
+      if (existing) throw new Error('HOLDOUT_RESERVATION_ALREADY_EXISTS');
+      const reservation: HoldoutReservation = { kind: 'HOLDOUT_RESERVATION', reservationId, ...input };
+      await this.appendRecord(reservation);
+      return reservation;
+    });
+    this.writeQueue = operation.then(() => undefined, () => undefined);
+    return operation;
+  }
+
+  async finalizeReservation(reservationId: string, resultClass: HoldoutResultClass): Promise<void> {
+    const operation = this.writeQueue.then(async () => {
+      const records = await this.records();
+      const reservation = records.find((item) => (item as { kind?: string; reservationId?: string }).kind === 'HOLDOUT_RESERVATION' && (item as { reservationId?: string }).reservationId === reservationId) as HoldoutReservation | undefined;
+      if (!reservation) throw new Error('HOLDOUT_RESERVATION_NOT_FOUND');
+      const finalized = records.some((item) => (item as { kind?: string; reservationId?: string }).kind === 'HOLDOUT_FINAL' && (item as { reservationId?: string }).reservationId === reservationId);
+      if (finalized) throw new Error('HOLDOUT_RESERVATION_ALREADY_FINAL');
+      await this.appendRecord({ kind: 'HOLDOUT_FINAL', reservationId, programRootId: reservation.programRootId, familyId: reservation.familyId, lineageId: reservation.lineageId, scope: reservation.scope, units: reservation.units, resultClass, timestamp: new Date().toISOString() });
+    });
+    this.writeQueue = operation.then(() => undefined, () => undefined);
+    return operation;
+  }
+
   async evaluate(input: HoldoutEvaluationInput): Promise<void> {
     const operation = this.writeQueue.then(async () => {
-      if (input.programRootId !== this.governedRootId) throw new Error('HOLDOUT_PROGRAM_ROOT_MISMATCH');
-      if (!Number.isInteger(input.units) || input.units <= 0) throw new Error('INVALID_HOLDOUT_UNITS');
-      if (!input.familyId || !input.lineageId) throw new Error('INVALID_HOLDOUT_TAXONOMY');
-      const currentGlobal = await this.consumed('GLOBAL');
-      const currentFamily = await this.consumed('FAMILY', input.familyId);
-      const currentLineage = await this.consumed('LINEAGE', input.familyId, input.lineageId);
-      if (currentGlobal + input.units > this.budgets.global) throw new Error('GLOBAL_HOLDOUT_BUDGET_EXCEEDED');
-      if (currentFamily + input.units > this.budgets.family) throw new Error('FAMILY_HOLDOUT_BUDGET_EXCEEDED');
-      if (currentLineage + input.units > this.budgets.lineage) throw new Error('LINEAGE_HOLDOUT_BUDGET_EXCEEDED');
-      await mkdir(dirname(this.path), { recursive: true });
-      const record = { ...input, programRootId: this.governedRootId, timestamp: new Date().toISOString() };
-      await appendFile(this.path, JSON.stringify(record) + '\n', 'utf8');
-      const handle = await open(this.path, 'r+');
-      try { await handle.sync(); } finally { await handle.close(); }
+      await this.validateBudget(input);
+      await this.appendRecord({ ...input, programRootId: this.governedRootId, kind: 'HOLDOUT_FINAL', timestamp: new Date().toISOString() });
     });
     this.writeQueue = operation.catch(() => undefined);
     return operation;

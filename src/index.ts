@@ -36,3 +36,4 @@ export * from './research/timeseries.js';
 export * from './research/features.js';
 export * from './research/cost-model.js';
 export * from './research/backtest.js';
+export * from './research/research-runner.js';

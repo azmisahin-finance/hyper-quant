@@ -77,6 +77,8 @@ export type VenueOrder = {
   clientOrderId?: string;
   createdAtMs: number;
   updatedAtMs: number;
+  filledQuantity?: number;
+  remainingQuantity?: number;
 };
 
 export type UnknownOrderState = { kind: 'UNKNOWN_ORDER_STATE'; reference: OrderReference; reason: string };

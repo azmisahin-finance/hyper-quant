@@ -1,6 +1,7 @@
 # Changelog
 
 ## Unreleased — v2.9 review candidate (2026-09-08)
+- Added read-only venue reconciliation controller primitives: reconnect/sequence-gap resync signalling, exact remote filled/remaining quantity requirements, account balance identity checks, and immutable reconciliation reporting; no live mutation capability introduced.
 
 - Added v2.9 as a hardening review candidate while preserving v2.8, v2.7, and v2.6 as prior review artifacts.
 - Hardened the non-live execution safety kernel with scope-aware kills, authorization-hash validation, fresh-time expiry checks, explicit risk/dependency/policy evaluators, canonical intent transitions, durable intent journal primitives, bounded reconciliation, and cross-platform test execution.

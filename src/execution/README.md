@@ -18,3 +18,8 @@ Lifecycle reconciliation is state-local and restart-safe: fill identities are re
 ## v2.9 execution realism
 
 The non-live execution layer includes deterministic order-book state, queue-aware resting-order estimation, and conservative two-phase cancel/replace handling. Live mutation remains blocked behind the canonical safety coordinator, mutation gateway, and signer boundary.
+
+
+## Venue reconciliation
+
+The v2.9 execution plane keeps venue observation and local paper state separate. `VenueObservationTracker` requires resynchronization after reconnects or sequence gaps. `VenueReconciliationController` uses read-only venue adapter methods and fails closed when exact remote fill/remaining quantities are unavailable or account totals violate `free + locked = total`. Live mutation remains outside this layer.

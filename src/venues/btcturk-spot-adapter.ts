@@ -151,6 +151,8 @@ export class BtcTurkSpotAdapter implements VenueAdapter {
       clientOrderId: row.orderClientId === undefined ? undefined : String(row.orderClientId),
       createdAtMs: asNumber(row.time, 'time'),
       updatedAtMs: asNumber(row.updateTime ?? row.time, 'updateTime'),
+      filledQuantity: row.leftAmount === undefined ? undefined : Math.max(0, asNumber(row.quantity, 'quantity') - asNumber(row.leftAmount, 'leftAmount')),
+      remainingQuantity: row.leftAmount === undefined ? undefined : asNumber(row.leftAmount, 'leftAmount'),
     }));
   }
 }

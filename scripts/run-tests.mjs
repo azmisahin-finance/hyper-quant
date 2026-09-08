@@ -1,18 +1,30 @@
 import { rm } from 'node:fs/promises';
-import { execFile } from 'node:child_process';
-import { promisify } from 'node:util';
+import { spawn } from 'node:child_process';
 import { readdir } from 'node:fs/promises';
 import { join } from 'node:path';
 
-const exec = promisify(execFile);
 const root = process.cwd();
 const outDir = join(root, '.build', 'test');
-const tscEntry = join(root, 'node_modules', 'typescript', 'bin', 'tsc');
+
+function runNode(args) {
+  return new Promise((resolve, reject) => {
+    const child = spawn(process.execPath, args, {
+      cwd: root,
+      stdio: 'inherit',
+      windowsHide: true,
+      windowsVerbatimArguments: false,
+    });
+    child.once('error', reject);
+    child.once('exit', (code, signal) => {
+      if (code === 0) resolve();
+      else reject(new Error(`Child process failed with code=${code} signal=${signal ?? 'none'}`));
+    });
+  });
+}
 
 await rm(outDir, { recursive: true, force: true });
-// Invoke TypeScript through the Node runtime instead of tsc.cmd. This keeps the
-// runner cross-platform and avoids Windows Node 24 spawn(EINVAL) on .cmd shims.
-await exec(process.execPath, [tscEntry, '--outDir', outDir, '--noEmit', 'false'], { cwd: root });
+const tscEntry = join(root, 'node_modules', 'typescript', 'lib', 'tsc.js');
+await runNode([tscEntry, '--outDir', outDir, '--noEmit', 'false']);
 
 async function collect(dir) {
   const entries = await readdir(dir, { withFileTypes: true });
@@ -26,4 +38,5 @@ async function collect(dir) {
 }
 
 const testFiles = await collect(join(outDir, 'tests'));
-await exec(process.execPath, ['--test', ...testFiles], { cwd: root, stdio: 'inherit' });
+if (testFiles.length === 0) throw new Error('No compiled test files found');
+await runNode(['--test', ...testFiles]);

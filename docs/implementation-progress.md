@@ -17,6 +17,9 @@
 - Independent RPT-03 statistical evidence verification bound to exact campaign
   statistics, derived trial identity count, persisted DSR/PSR return convention,
   deterministic lineage, and input/result/evidence hashes
+- RPT-04 sealed holdout certificate with deterministic selection, campaign and
+  reservation binding, lineage hashes, mutation/leakage checks, and explicit
+  process/physical isolation statuses
 
 ### Remaining proof obligations
 
@@ -64,6 +67,8 @@ and explicit `COMPLETED`, `NO_TRADE`, or `FAIL` outcomes. This is not market
 profitability evidence and does not establish live connectivity.
 
 The complete report register and current statuses are in
-[`docs/evidence-reports.md`](evidence-reports.md). `RPT-03`, `RPT-04`,
-`RPT-05`, `RPT-06`, `RPT-07`, `RPT-09`, and `RPT-11` remain `OPEN`;
-`RPT-08`, `RPT-10`, and `RPT-12` remain `BLOCKED`.
+[`docs/evidence-reports.md`](evidence-reports.md). `RPT-03` remains `PARTIAL`;
+`RPT-04` remains `PARTIAL`; `RPT-05`, `RPT-06`, `RPT-07`, `RPT-09`, and
+`RPT-11` remain `OPEN`;
+`RPT-08`, `RPT-10`, and `RPT-12` remain `BLOCKED`. RPT-04 remains `PARTIAL`
+because physical sealed-holdout isolation is not proven by this repository.

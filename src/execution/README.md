@@ -13,3 +13,8 @@ Order state is event-driven and canonical: `NEW → ACCEPTED → PARTIALLY_FILLE
 `OrderLifecycleJournal` persists lifecycle events through the immutable hash-chained event log so restart rehydration is deterministic. This is a persistence primitive; exchange truth remains authoritative for reconciliation.
 
 Lifecycle reconciliation is state-local and restart-safe: fill identities are retained in the canonical state, cancel requests may race with later fills, and remote snapshots are applied only after quantity/time invariants pass. An UNKNOWN remote result never becomes a local FILLED/CANCELLED assumption.
+
+
+## v2.9 execution realism
+
+The non-live execution layer includes deterministic order-book state, queue-aware resting-order estimation, and conservative two-phase cancel/replace handling. Live mutation remains blocked behind the canonical safety coordinator, mutation gateway, and signer boundary.

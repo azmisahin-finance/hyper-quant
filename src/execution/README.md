@@ -5,3 +5,11 @@ Reserved for the safety/execution kernel. This area must preserve durable intent
 ## Execution simulation
 
 `simulator.ts` is a non-live deterministic execution reference. It models market/limit fills, liquidity caps, fees, slippage, cash/position constraints, realized/unrealized PnL, and produces a reproducible result hash. It cannot reach a live venue gateway.
+
+## Order lifecycle vertical slice
+
+Order state is event-driven and canonical: `NEW → ACCEPTED → PARTIALLY_FILLED → FILLED` with explicit `CANCEL_REQUESTED`, `CANCELLED`, `REJECTED`, `EXPIRED`, and `UNKNOWN` branches. Events are monotonic and replay-protected; unknown remote state never implies a local fill/cancel decision.
+
+`OrderLifecycleJournal` persists lifecycle events through the immutable hash-chained event log so restart rehydration is deterministic. This is a persistence primitive; exchange truth remains authoritative for reconciliation.
+
+Lifecycle reconciliation is state-local and restart-safe: fill identities are retained in the canonical state, cancel requests may race with later fills, and remote snapshots are applied only after quantity/time invariants pass. An UNKNOWN remote result never becomes a local FILLED/CANCELLED assumption.

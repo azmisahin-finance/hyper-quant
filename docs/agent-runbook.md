@@ -4,6 +4,10 @@
 
 This runbook defines how any agent, automation, or human operator should understand and execute work in this repository without drifting away from the safety and review boundaries.
 
+The multi-perspective role model, lifecycle RACI, decision rights, and mandatory
+post-operation checklist are defined in
+[`docs/specification-governance.md`](specification-governance.md).
+
 ## Project status summary
 
 - Spec status: `REVIEW_REQUIRED`

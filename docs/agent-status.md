@@ -5,7 +5,7 @@ This file is the resumable operational state for AI agents and operators. Update
 ## Current project state
 
 - Repository: `azmisahin-finance/hyper-quant`
-- Current branch: `azmisahin-project-review-plan`
+- Current branch: `azmisahin-role-operating-model`
 - Spec version: `v2.9`
 - Review status: `REVIEW_REQUIRED`
 - Live trading status: `PROHIBITED`
@@ -13,7 +13,10 @@ This file is the resumable operational state for AI agents and operators. Update
 
 ## Current objective
 
-Establish a durable operating model so a future AI agent or operator can understand the repo, follow the constraints, resume work without ambiguity, and validate changes before claiming completion.
+Establish a durable multi-perspective operating model so a future AI agent or
+operator can understand role accountabilities, lifecycle gates, decision rights,
+escalation, reporting, and post-operation obligations without weakening the v2.9
+review boundary.
 
 ## Completion status
 
@@ -22,7 +25,8 @@ Establish a durable operating model so a future AI agent or operator can underst
 - [x] Create repo-level AI instructions (`AGENTS.md`, `.github/copilot-instructions.md`)
 - [x] Create the agent runbook and operational boundaries
 - [x] Add a deterministic repo status/script for future agents
-- [ ] Finalize any additional release or governance checklist needed by human reviewers
+- [x] Add the multi-perspective specification governance and operating model
+- [ ] Obtain independent human/adversarial review before any production claim
 
 ## Last validated baseline
 
@@ -31,7 +35,7 @@ Establish a durable operating model so a future AI agent or operator can underst
 
 ## Immediate next actions
 
-1. Review whether additional docs or templates are needed for issue/PR governance.
+1. Obtain independent review of `docs/specification-governance.md`.
 2. Keep this ledger updated whenever work continues.
 3. Use `node scripts/agent-status.mjs` as the default status command for the next agent.
 

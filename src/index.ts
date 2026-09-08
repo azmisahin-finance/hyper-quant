@@ -20,6 +20,8 @@ export * from './research/holdout-ledger.js';
 export * from './research/statistics.js';
 export * from './research/dsr.js';
 export * from './research/search-diagnostics.js';
+export * from './research/campaign-ledger.js';
+export * from './research/campaign.js';
 export * from './research/trial-ledger.js';
 export * from './risk/exposure-engine.js';
 export * from './risk/promotion-policy.js';

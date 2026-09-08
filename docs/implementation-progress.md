@@ -25,3 +25,7 @@
 - External signer isolation and live venue reconciliation
 
 No live mutation is authorized by this implementation.
+
+## v2.9 research campaign orchestration
+
+The reference implementation now contains a durable non-live `ResearchCampaignRunner` and campaign ledger. Candidate trials are receipted before compute, committed trial count is derived from the trial ledger, candidate selection is deterministic, and campaign-level CSCV/PBO/DSR diagnostics plus an evidence hash are persisted. Holdout execution remains outside the search campaign and is not consumed before candidate selection.

@@ -24,3 +24,7 @@ The v2.9 research plane now includes executable walk-forward folds, a determinis
 ## Walk-forward / overfitting / regime validation
 
 `createWalkForwardFolds` produces chronological non-overlapping out-of-sample folds and requires the declared purge+embargo gap. `computePboCscv` provides a deterministic CSCV/PBO diagnostic over candidate return paths and refuses combinatorial expansion above a declared cap. `evaluateRegimeCoverage` evaluates only explicit regime segments over explicit out-of-sample indices. These are governance diagnostics and must be bound to a committed research receipt before promotion use.
+
+## Research campaign orchestration
+
+`ResearchCampaignRunner` is the controlled non-live search entry point. It registers every candidate before compute, derives the committed trial count from the durable trial ledger, selects deterministically by mean return, computes CSCV/PBO and DSR from the resulting candidate set, and persists a campaign evidence record. It does not consume holdout data and does not grant promotion authority; holdout evaluation remains a separate post-selection control boundary.

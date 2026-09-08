@@ -56,6 +56,7 @@ jobs:
           test -f src/research/cost-model.ts
           test -f src/research/backtest.ts
           test -f spec/reviews/v2.9/v2.9-research-vertical-slice-review.md
+          test -f spec/reviews/v2.9/v2.9-campaign-orchestration-review.md
           test -f src/research/research-runner.ts
           test -f docs/implementation-progress.md
           test -f spec/annex/statistical-methods-v1.md

@@ -164,7 +164,8 @@ test('research validation: CSCV/PBO is deterministic and detects a dominated sel
   const second = computePboCscv(input);
   assert.deepEqual(second, first);
   assert.equal(first.combinationsEvaluated, 6);
-  assert.ok(first.pbo >= 0 && first.pbo <= 1);
+  assert.ok(first.pbo > 0.10);
+  assert.ok(first.pbo <= 1);
 });
 
 test('research validation: regime coverage is computed only on declared evaluation indices', () => {
@@ -179,6 +180,7 @@ test('research validation: regime coverage is computed only on declared evaluati
   );
   assert.equal(report.distinctRegimes, 3);
   assert.deepEqual(report.evaluations.map((r) => r.regimeId), ['R1', 'R2', 'R3']);
+  assert.throws(() => evaluateRegimeCoverage([0, 0], [0], [{ regimeId: 'R1', startIndexInclusive: 1, endIndexExclusive: 2 }]), /REGIME_SEGMENTS_MUST_BE_CONTIGUOUS/);
 });
 
 test('research validation: overlapping walk-forward test windows are forbidden', () => {

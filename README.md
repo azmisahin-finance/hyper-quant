@@ -45,6 +45,8 @@ Key files:
 - `AGENTS.md` — repo-level operating manual and non-negotiable guardrails for AI agents.
 - `.github/copilot-instructions.md` — Copilot-specific execution brief.
 - `docs/agent-runbook.md` — task execution, review gates, and resume procedure.
+- `docs/specification-governance.md` — role accountabilities, lifecycle gates,
+  decision rights, escalation, and AI autonomy boundaries.
 - `docs/agent-status.md` — active handoff and resumable state ledger.
 - `scripts/agent-status.mjs` — deterministic status command for current repo health and next actions.
 
@@ -95,6 +97,7 @@ hyper-quant/
 │           └── v2.9-adversarial-review.md
 ├── docs/
 │   ├── architecture.md
+│   ├── specification-governance.md
 │   ├── research-lifecycle.md
 │   └── deployment-gates.md
 ├── research/

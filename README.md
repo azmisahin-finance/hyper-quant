@@ -6,13 +6,13 @@
 
 ## Project status
 
-**Current specification:** v2.6 — `REVIEW_REQUIRED`
+**Current specification:** v2.7 — `REVIEW_REQUIRED`
 
 The repository is intentionally public while the specification is still under independent adversarial review. There is **no approved production master specification in this repository yet**.
 
-The canonical v2.6 candidate is:
+The canonical v2.7 candidate is:
 
-`spec/versions/v2.6/HYPER-QUANT_MASTER_SPEC_v2.6.md`
+`spec/versions/v2.7/HYPER-QUANT_MASTER_SPEC_v2.7.md`
 
 The `spec/master/` directory will contain the approved canonical master only after the review matrix, document identity, Definition of Done, and independent adversarial review all close successfully.
 
@@ -60,11 +60,13 @@ hyper-quant/
 │   ├── master/
 │   │   └── README.md
 │   ├── versions/
-│   │   └── v2.6/
-│   │       └── HYPER-QUANT_MASTER_SPEC_v2.6.md
+│   │   └── v2.7/
+│   │       └── HYPER-QUANT_MASTER_SPEC_v2.7.md
+│   ├── annex/
+│   │   └── statistical-methods-v1.md
 │   └── reviews/
-│       └── v2.6/
-│           └── v2.6-adversarial-review.md
+│       └── v2.7/
+│           └── v2.7-adversarial-review.md
 ├── docs/
 │   ├── architecture.md
 │   ├── research-lifecycle.md
@@ -72,9 +74,20 @@ hyper-quant/
 ├── research/
 │   └── README.md
 ├── src/
-│   └── README.md
+│   ├── README.md
+│   └── execution/
+│       ├── barrier.ts
+│       └── mutation-coordinator.ts
 ├── tests/
-│   └── README.md
+│   ├── README.md
+│   ├── adversarial/
+│   │   ├── deterministic-barrier.ts
+│   │   └── toctou-kill-race.test.ts
+│   └── unit/
+│       └── spec-status.test.ts
+├── tsconfig.prod.json
+├── types/
+│   └── node-shims.d.ts
 ├── configs/
 │   ├── README.md
 │   └── .env.example
@@ -92,7 +105,7 @@ hyper-quant/
 
 Never commit API keys, private keys, seed phrases, exchange credentials, personal account exports, production secrets, or unredacted sensitive logs.
 
-Production signing material is intentionally outside the research/AI plane. See `SECURITY.md` and the v2.6 specification for the normative controls.
+Production signing material is intentionally outside the research/AI plane. The execution race scaffold is non-live; see `SECURITY.md` and the v2.7 specification for the normative controls.
 
 ## License
 

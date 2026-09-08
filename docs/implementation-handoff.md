@@ -10,7 +10,7 @@ The repository is intentionally usable as a starting point for a new engineer, b
 
 Current candidate specification:
 
-`spec/versions/v2.6/HYPER-QUANT_MASTER_SPEC_v2.6.md`
+`spec/versions/v2.7/HYPER-QUANT_MASTER_SPEC_v2.7.md`
 
 Current status:
 
@@ -22,13 +22,13 @@ No approved production master is present yet.
 
 Implement infrastructure and safety boundaries before alpha complexity:
 
-1. deterministic domain types and state machines,
+1. deterministic domain types and state machines, including the canonical intent lifecycle and commit boundary,
 2. research-trial identity and durable ledger interfaces,
 3. market/account data contracts,
 4. replay/backtest interfaces with realistic cost modeling,
 5. risk and capital-allocation invariants,
 6. venue execution profiles,
-7. reconciliation and protective-exit machinery,
+7. reconciliation and protective-exit machinery, including `IN_FLIGHT` handling,
 8. only then strategy logic and live adapters.
 
 ## What must not happen in an early implementation
@@ -58,3 +58,8 @@ Every material design change should identify:
 - whether the change affects research validity, risk, execution, security, or release gates.
 
 When evidence is insufficient, stop at `REVIEW_REQUIRED` rather than inventing an assumption.
+
+
+## v2.7 implementation boundary
+
+The current scaffold implements only the local deterministic authorization/race contract. It does not submit orders, sign payloads, connect credentials, or access a production venue. `DeterministicBarrier` and test mutation executors are test-only and must remain outside production builds.

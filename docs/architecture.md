@@ -19,3 +19,10 @@ Research and AI may **propose**. The execution kernel may **validate and execute
 ## Design objective
 
 The architecture is designed to fail closed where possible, surface ambiguity where necessary, and prevent a local process or model from becoming the sole source of truth for live exposure.
+
+
+## Execution authorization boundary
+
+The execution path is explicitly split into authorization, final revalidation, commit boundary, remote handoff, and reconciliation. The authorization snapshot carries kill-state, dependency-graph, risk-authorization, and execution-policy versions plus a single-use nonce.
+
+The only test-specific component is scheduling control (`DeterministicBarrier`); production safety logic is unchanged between test and production composition. Once the remote handoff boundary is crossed, the mutation is `IN_FLIGHT` until exchange truth resolves its outcome.

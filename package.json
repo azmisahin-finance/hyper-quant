@@ -2,7 +2,9 @@
   "name": "@azmisahin-finance/hyper-quant",
   "version": "0.1.0",
   "private": true,
-  "publishConfig": {"provenance": true},
+  "publishConfig": {
+    "provenance": true
+  },
   "description": "Evidence-driven quantitative research, capital-allocation, risk, and execution-safety platform.",
   "license": "GPL-3.0-or-later",
   "engines": {
@@ -10,7 +12,11 @@
   },
   "scripts": {
     "check": "tsc --noEmit",
-    "test": "node --test",
+    "build": "tsc -p tsconfig.prod.json",
+    "test": "rm -rf .build/test && tsc --outDir .build/test --noEmit false && node --test $(find .build/test/tests -name '*.test.js' -print)",
     "lint": "node -e \"console.log('Linting placeholder: implementation not yet promoted from specification review')\""
+  },
+  "devDependencies": {
+    "typescript": "^5.9.2"
   }
 }

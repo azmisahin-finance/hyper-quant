@@ -1,6 +1,6 @@
 # Source Tree
 
-Implementation is intentionally separated from the specification while the v2.6 candidate is under review.
+Implementation is intentionally separated from the specification while the v2.7 candidate is under review.
 
 Expected implementation boundaries include:
 

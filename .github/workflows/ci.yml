@@ -14,6 +14,22 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Install build dependencies
+        shell: bash
+        run: npm install --ignore-scripts --no-audit --no-fund
+
+      - name: Type-check production and tests
+        shell: bash
+        run: npm run check
+
+      - name: Build production artifact
+        shell: bash
+        run: npm run build
+
+      - name: Run deterministic test suite
+        shell: bash
+        run: npm test
+
       - name: Check required repository files
         shell: bash
         run: |
@@ -23,20 +39,25 @@ jobs:
           test -f SECURITY.md
           test -f CONTRIBUTING.md
           test -f CHANGELOG.md
+          test -f spec/versions/v2.7/HYPER-QUANT_MASTER_SPEC_v2.7.md
           test -f spec/versions/v2.6/HYPER-QUANT_MASTER_SPEC_v2.6.md
-          test -f spec/reviews/v2.6/v2.6-adversarial-review.md
+          test -f spec/reviews/v2.7/v2.7-adversarial-review.md
+          test -f spec/annex/statistical-methods-v1.md
 
       - name: Detect obvious secret files
         shell: bash
         run: |
           set -euo pipefail
-          ! find . -type f \( -name '*.pem' -o -name '*.key' -o -name '*.p12' -o -name '*.pfx' \) -not -path './.git/*' | grep -q .
+          ! find . -type f \( -name '*.pem' -o -name '*.key' -o -name '*.p12' -o -name '*.pfx'\) -not -path './.git/*' | grep -q .
 
-      - name: Verify no v2.3/v2.4/v2.5 identity drift in current candidate
+      - name: Verify v2.7 identity consistency
         shell: bash
         run: |
           set -euo pipefail
-          ! grep -nE 'HYPER-QUANT MASTER SPEC v2\.(3|4|5)|^\*\*Version:\*\* 2\.(3|4|5)' spec/versions/v2.6/HYPER-QUANT_MASTER_SPEC_v2.6.md
+          test "$(grep -c '^# HYPER-QUANT MASTER SPEC v2.7$' spec/versions/v2.7/HYPER-QUANT_MASTER_SPEC_v2.7.md)" -eq 1
+          grep -q '^\*\*Version:\*\* 2.7' spec/versions/v2.7/HYPER-QUANT_MASTER_SPEC_v2.7.md
+          grep -q '^# END OF MASTER SPECIFICATION v2.7$' spec/versions/v2.7/HYPER-QUANT_MASTER_SPEC_v2.7.md
+          ! grep -nE '^\*\*Version:\*\* 2\.(3|4|5|6)' spec/versions/v2.7/HYPER-QUANT_MASTER_SPEC_v2.7.md
 
       - name: Verify no approved master is present
         shell: bash
@@ -45,15 +66,32 @@ jobs:
           test ! -f spec/master/HYPER-QUANT_MASTER_SPEC.md
           grep -q 'Status: NONE APPROVED YET' spec/master/README.md
 
+      - name: Verify production artifact excludes test-only capabilities
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -d .build/prod
+          ! grep -RniE 'DeterministicBarrier|TestMutationExecutor|FaultInjector|tests/adversarial' .build/prod
+
       - name: Verify implementation scaffold is non-live
         shell: bash
         run: |
           set -euo pipefail
-          ! grep -RniE 'place order|submit order|private key|secret seed' src --exclude='README.md'
+          ! grep -RniE 'place order|submit order|private key|secret seed|DeterministicBarrier|TestMutationExecutor|FaultInjector' src --exclude='README.md'
 
-      - name: Verify v2.6 review state
+      - name: Verify hard release-gate contracts are present
         shell: bash
         run: |
           set -euo pipefail
-          grep -q 'Status.*REVIEW_REQUIRED' spec/versions/v2.6/HYPER-QUANT_MASTER_SPEC_v2.6.md
-          grep -q 'Current specification.*v2.6.*REVIEW_REQUIRED' README.md
+          grep -q 'Test/Production Capability Parity Release Gate' spec/versions/v2.7/HYPER-QUANT_MASTER_SPEC_v2.7.md
+          grep -q 'Commit boundary' spec/versions/v2.7/HYPER-QUANT_MASTER_SPEC_v2.7.md
+          grep -q 'UNKNOWN_REQUIRES_RECONCILIATION' spec/versions/v2.7/HYPER-QUANT_MASTER_SPEC_v2.7.md
+          grep -q 'GLOBAL_HOLDOUT_BUDGET' spec/versions/v2.7/HYPER-QUANT_MASTER_SPEC_v2.7.md
+          grep -q 'RESEARCH_INTEGRITY_KILL' spec/versions/v2.7/HYPER-QUANT_MASTER_SPEC_v2.7.md
+
+      - name: Verify v2.7 review state
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -q 'Status.*REVIEW_REQUIRED' spec/versions/v2.7/HYPER-QUANT_MASTER_SPEC_v2.7.md
+          grep -q 'Current specification.*v2.7.*REVIEW_REQUIRED' README.md

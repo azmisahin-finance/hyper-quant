@@ -64,3 +64,5 @@ export * from './execution/paper-execution.js';
 export * from './execution/venue-reconciliation-controller.js';
 
 export * from './data/btcturk-ws-session.js';
+export * from './data/btcturk-private-ws.js';
+export * from './data/btcturk-private-session.js';

@@ -1,3 +1,6 @@
+
+## Next
+- Add read-only BtcTurk private WebSocket observation with HMAC login, private order/trade normalization, and fail-closed pre-auth handling.
 # Changelog
 
 ## Unreleased — v2.9 review candidate (2026-09-08)

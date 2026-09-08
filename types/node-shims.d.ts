@@ -20,7 +20,9 @@ declare module 'node:path' {
 }
 declare module 'node:crypto' {
   export const createHash: any;
+  export const createHmac: any;
 }
 declare module 'node:os' {
   export const tmpdir: any;
 }
+declare const Buffer: any;

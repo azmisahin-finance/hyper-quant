@@ -5,7 +5,7 @@ This file is the resumable operational state for AI agents and operators. Update
 ## Current project state
 
 - Repository: `azmisahin-finance/hyper-quant`
-- Current branch: `azmisahin-rpt-03-independent-statistics`
+- Current branch: `azmisahin-rpt-04-holdout-certificate`
 - Spec version: `v2.9`
 - Review status: `REVIEW_REQUIRED`
 - Live trading status: `PROHIBITED`
@@ -13,8 +13,8 @@ This file is the resumable operational state for AI agents and operators. Update
 
 ## Current objective
 
-Implement RPT-03 independent statistical evidence for BtcTurk `BTC/TRY`,
-read-only/non-live, without changing the review gate.
+Implement RPT-04 sealed holdout evaluation certification for BtcTurk
+`BTC/TRY`, read-only/non-live, without changing the review gate.
 
 ## Completion status
 
@@ -30,17 +30,19 @@ read-only/non-live, without changing the review gate.
 - [x] Add the RPT-01/RPT-02 deterministic report contract and fixture runner
 - [x] Add RPT-03 independent DSR/PSR recomputation, derived trial count,
   persisted convention, deterministic lineage, and explicit outcomes
+- [x] Add RPT-04 deterministic holdout selection, campaign binding, lineage
+  hashes, mutation/leakage checks, and explicit isolation outcomes
 - [ ] Obtain independent human/adversarial review before any production claim
 
 ## Last validated baseline
 
 - `npm run check` — passed
-- `npm test` — passed (115 tests, 0 failed)
+- `npm test` — passed (126 tests, 0 failed)
 
 ## Immediate next actions
 
-1. Obtain independent review of the RPT-03 contract and fixture outputs.
-2. Implement the remaining report register entries only with durable evidence.
+1. Obtain independent review of the RPT-04 contract and fixture outputs.
+2. Obtain external evidence before claiming physical sealed-holdout isolation.
 3. Keep this ledger updated whenever work continues.
 4. Use `node scripts/agent-status.mjs` as the default status command for the next agent.
 

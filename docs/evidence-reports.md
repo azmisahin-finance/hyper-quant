@@ -9,7 +9,7 @@ submit orders, move capital, or authorize promotion.
 | RPT-01 | Baseline Research Campaign Report | PARTIAL |
 | RPT-02 | Reproducibility and Data Lineage Certificate | PARTIAL |
 | RPT-03 | Independent Statistical Evidence Package | PARTIAL |
-| RPT-04 | Replay Determinism Certificate | OPEN |
+| RPT-04 | Sealed Holdout Evaluation Certificate | PARTIAL |
 | RPT-05 | Execution Cost and Slippage Report | OPEN |
 | RPT-06 | Walk-Forward Validation Report | OPEN |
 | RPT-07 | Overfitting and PBO Diagnostic Report | OPEN |
@@ -31,4 +31,14 @@ hash to the campaign candidate record, independently recomputes DSR and PSR
 using the persisted `PER_PERIOD_ARITHMETIC_MEAN_SAMPLE_STDDEV` convention, and
 emits deterministic input, result, lineage, and evidence hashes. It reports
 `COMPLETED`, `FAIL`, or `BLOCKED`; none is a promotion or live-trading
+authorization.
+
+`src/research/holdout-certificate.ts` is the RPT-04 non-live boundary. It
+selects holdout identifiers deterministically from the dataset and campaign
+identity, binds the reservation to the finalized campaign, records campaign and
+holdout lineage hashes, and detects overlap or evaluator mutation. The
+certificate exposes `COMPLETED`, `FAIL`, or `BLOCKED` outcomes. Process and
+physical isolation are separate explicit statuses; this repository cannot prove
+physical sealed storage, so the fixture remains `BLOCKED` unless an external
+review artifact verifies that boundary. RPT-04 is not promotion or live-trading
 authorization.

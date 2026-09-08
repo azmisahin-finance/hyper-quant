@@ -14,7 +14,8 @@
     "check": "tsc --noEmit",
     "build": "tsc -p tsconfig.prod.json",
     "test": "node scripts/run-tests.mjs",
-    "lint": "node -e \"console.log('Linting placeholder: implementation not yet promoted from specification review')\""
+    "lint": "node -e \"console.log('Linting placeholder: implementation not yet promoted from specification review')\"",
+    "agent:status": "node scripts/agent-status.mjs"
   },
   "devDependencies": {
     "typescript": "^5.9.2"

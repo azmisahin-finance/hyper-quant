@@ -36,6 +36,26 @@ HYPER-QUANT is a quantitative research and execution platform rather than a sing
 
 The economic objective is **empirical net-positive expectancy after realistic costs**, followed by safe capital growth when the evidence justifies additional allocation.
 
+## Operational governance for agents
+
+This repository is designed so that any AI agent or operator can understand the current status, the rules of engagement, and the expected handoff flow before making changes.
+
+Key files:
+
+- `AGENTS.md` — repo-level operating manual and non-negotiable guardrails for AI agents.
+- `.github/copilot-instructions.md` — Copilot-specific execution brief.
+- `docs/agent-runbook.md` — task execution, review gates, and resume procedure.
+- `docs/agent-status.md` — active handoff and resumable state ledger.
+- `scripts/agent-status.mjs` — deterministic status command for current repo health and next actions.
+
+Use:
+
+```bash
+node scripts/agent-status.mjs
+npm run check
+npm test
+```
+
 ## Research philosophy
 
 The program deliberately does not assume that an individual trader can reproduce institutional HFT economics. Discovery priority therefore favors retail-accessible and structurally testable mechanisms before pure short-horizon prediction:

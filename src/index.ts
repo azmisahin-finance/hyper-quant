@@ -33,6 +33,9 @@ export * from './data/btcturk-ws.js';
 export * from './replay/replay-engine.js';
 
 export * from './research/timeseries.js';
+export * from './research/walk-forward.js';
+export * from './research/overfitting.js';
+export * from './research/regimes.js';
 export * from './research/features.js';
 export * from './research/cost-model.js';
 export * from './research/backtest.js';

@@ -16,3 +16,11 @@ This is a research harness, not evidence of alpha or venue profitability. Live m
 ## Research governance vertical slice
 
 `ResearchRunner` is the approved reference entry point for controlled non-live trials. It persists the receipt before compute, validates dependency and artifact identity, reserves holdout budget before final evaluation, derives multiple-testing count from the committed trial ledger, and persists terminal outcomes. Promotion authority is not granted by this runner.
+
+## Research validation vertical slice
+
+The v2.9 research plane now includes executable walk-forward folds, a deterministic CSCV/PBO diagnostic, and declared regime-segment evaluation. These diagnostics are non-live governance controls: they do not claim alpha, guarantee future performance, or replace independent review.
+
+## Walk-forward / overfitting / regime validation
+
+`createWalkForwardFolds` produces chronological non-overlapping out-of-sample folds and requires the declared purge+embargo gap. `computePboCscv` provides a deterministic CSCV/PBO diagnostic over candidate return paths and refuses combinatorial expansion above a declared cap. `evaluateRegimeCoverage` evaluates only explicit regime segments over explicit out-of-sample indices. These are governance diagnostics and must be bound to a committed research receipt before promotion use.

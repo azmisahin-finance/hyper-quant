@@ -4,6 +4,9 @@ import { deriveDependencyManifest, enforceDeclaredLookback, type FeatureNode } f
 import { assertArtifactIdentity, type ArtifactIdentityChain } from './artifact-identity.js';
 import { validateStatisticalEvidence, type StatisticalDecision, type StatisticalPolicy } from './statistics.js';
 import { HoldoutLedger, type HoldoutEvaluationInput } from './holdout-ledger.js';
+import type { WalkForwardFold } from './walk-forward.js';
+import type { CsCvResult } from './overfitting.js';
+import type { RegimeCoverageReport } from './regimes.js';
 
 export type ResearchPolicy = StatisticalPolicy & {
   minEffectiveOosOpportunities: number;
@@ -16,6 +19,9 @@ export type ResearchPolicy = StatisticalPolicy & {
 
 export type ResearchEvidence = {
   effectiveOosOpportunities: number;
+  walkForward: { folds: readonly WalkForwardFold[]; effectiveOosOpportunities: number };
+  pboCscv: Pick<CsCvResult, 'pbo' | 'combinationsEvaluated'>;
+  regimeCoverage: Pick<RegimeCoverageReport, 'distinctRegimes'>;
   pbo: number;
   contiguousBlockNetReturns: readonly number[];
   calendarWeekNetReturns: readonly number[];
@@ -60,13 +66,17 @@ function maxShare(values: readonly number[]): number {
 }
 
 function validateResearchEvidence(evidence: ResearchEvidence, policy: ResearchPolicy, committedTrialCount: number): StatisticalDecision {
+  if (evidence.walkForward.effectiveOosOpportunities !== evidence.effectiveOosOpportunities) throw new Error('OOS_EVIDENCE_MISMATCH');
+  if (evidence.walkForward.folds.length < 2) throw new Error('INSUFFICIENT_WALK_FORWARD_FOLDS');
   if (!Number.isInteger(evidence.effectiveOosOpportunities) || evidence.effectiveOosOpportunities < policy.minEffectiveOosOpportunities) {
     return { pass: false, reason: 'INSUFFICIENT_SAMPLE' };
   }
-  if (!Number.isFinite(evidence.pbo) || evidence.pbo >= policy.maxPbo) throw new Error('PBO_GATE_FAILED');
+  if (evidence.pboCscv.combinationsEvaluated < 1 || !Number.isFinite(evidence.pboCscv.pbo) || evidence.pboCscv.pbo >= policy.maxPbo) throw new Error('PBO_GATE_FAILED');
+  if (evidence.pbo !== evidence.pboCscv.pbo) throw new Error('PBO_EVIDENCE_MISMATCH');
   if (maxShare(evidence.contiguousBlockNetReturns) > policy.maxSingleBlockPnlShare) throw new Error('BLOCK_PNL_CONCENTRATION_FAILED');
   if (maxShare(evidence.calendarWeekNetReturns) > policy.maxSingleWeekPnlShare) throw new Error('WEEK_PNL_CONCENTRATION_FAILED');
-  const distinctRegimes = new Set(evidence.regimeIds).size;
+  const distinctRegimes = evidence.regimeCoverage.distinctRegimes;
+  if (distinctRegimes !== new Set(evidence.regimeIds).size) throw new Error('REGIME_EVIDENCE_MISMATCH');
   if (distinctRegimes < policy.minDistinctRegimes) throw new Error('REGIME_COVERAGE_FAILED');
   if (!Number.isFinite(evidence.stressedNetExpectancy) || evidence.stressedNetExpectancy <= 0) throw new Error('COST_STRESS_FAILED');
   const statistical = { ...evidence.statistical, declaredTrialCount: committedTrialCount };

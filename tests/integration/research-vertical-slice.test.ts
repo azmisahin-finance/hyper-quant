@@ -17,6 +17,9 @@ function bars(count = 30): ResearchBar[] {
   });
 }
 
+import { createWalkForwardFolds, assertWalkForwardIntegrity } from '../../src/research/walk-forward.js';
+import { computePboCscv } from '../../src/research/overfitting.js';
+import { evaluateRegimeCoverage } from '../../src/research/regimes.js';
 test('research vertical slice: feature rows cannot receive future bars', () => {
   const engine = new FeatureEngine([rollingZScoreFeature('zscore_5', 5)]);
   const result = engine.evaluate(bars());
@@ -101,7 +104,7 @@ test('research governance: runner registers receipt before compute and counts co
     let computeSawReceipt = false;
     const result = await runner.run({ receipt: receipt('T1'), featureNodes: [{ id: 'z', inputs: ['close'], lookback: 5, labelHorizon: 1 }], declaredLookback: 5, artifactExpected: artifact(), artifactExecuted: artifact(), holdout: false }, async () => {
       computeSawReceipt = await ledger.hasReceipt('T1');
-      return { value: 7, evidence: { effectiveOosOpportunities: 200, pbo: 0.05, contiguousBlockNetReturns: [1, 1, 1, 1], calendarWeekNetReturns: [1, 1, 1, 1], regimeIds: ['R1', 'R2', 'R3'], stressedNetExpectancy: 1, statistical: { meanTradeExpectancy: 1, sampleCount: 200, sampleStdDev: 1, dsr: 0.99 } } };
+      return { value: 7, evidence: { effectiveOosOpportunities: 200, walkForward: { folds: [{ foldId: 0, trainStartIndex: 0, testEndIndexExclusive: 100, split: { trainIndices: [0], testIndices: [10, 11], purgedIndices: [8], embargoedIndices: [9] } }, { foldId: 1, trainStartIndex: 0, testEndIndexExclusive: 120, split: { trainIndices: [0], testIndices: [20, 21], purgedIndices: [18], embargoedIndices: [19] } }], effectiveOosOpportunities: 200 }, pboCscv: { pbo: 0.05, combinationsEvaluated: 6 }, regimeCoverage: { distinctRegimes: 3 }, pbo: 0.05, contiguousBlockNetReturns: [1, 1, 1, 1], calendarWeekNetReturns: [1, 1, 1, 1], regimeIds: ['R1', 'R2', 'R3'], stressedNetExpectancy: 1, statistical: { meanTradeExpectancy: 1, sampleCount: 200, sampleStdDev: 1, dsr: 0.99 } } };
     });
     assert.equal(computeSawReceipt, true);
     assert.equal(result.outcome, 'PASS');
@@ -111,7 +114,7 @@ test('research governance: runner registers receipt before compute and counts co
 
 test('research governance: statistical trial count comes from committed ledger, not analyst input', async () => {
   const decision = validateResearchEvidenceForPromotion(
-    { effectiveOosOpportunities: 200, pbo: 0.05, contiguousBlockNetReturns: [1, 1], calendarWeekNetReturns: [1, 1], regimeIds: ['R1', 'R2', 'R3'], stressedNetExpectancy: 1, statistical: { meanTradeExpectancy: 1, sampleCount: 200, sampleStdDev: 1, dsr: 0.99 } },
+    { effectiveOosOpportunities: 200, walkForward: { folds: [{ foldId: 0, trainStartIndex: 0, testEndIndexExclusive: 100, split: { trainIndices: [0], testIndices: [10, 11], purgedIndices: [8], embargoedIndices: [9] } }, { foldId: 1, trainStartIndex: 0, testEndIndexExclusive: 120, split: { trainIndices: [0], testIndices: [20, 21], purgedIndices: [18], embargoedIndices: [19] } }], effectiveOosOpportunities: 200 }, pboCscv: { pbo: 0.05, combinationsEvaluated: 6 }, regimeCoverage: { distinctRegimes: 3 }, pbo: 0.05, contiguousBlockNetReturns: [1, 1], calendarWeekNetReturns: [1, 1], regimeIds: ['R1', 'R2', 'R3'], stressedNetExpectancy: 1, statistical: { meanTradeExpectancy: 1, sampleCount: 200, sampleStdDev: 1, dsr: 0.99 } },
     researchPolicy(),
     2,
   );
@@ -141,4 +144,47 @@ test('research governance: failed compute produces a durable CRASHED outcome', a
     assert.equal(records.at(-1)?.kind, 'TRIAL_OUTCOME');
     assert.equal(records.at(-1)?.outcome, 'CRASHED');
   } finally { await rm(temp, { recursive: true, force: true }); }
+});
+
+
+test('research validation: walk-forward folds are chronological, purged, and embargoed', () => {
+  const folds = createWalkForwardFolds(120, { trainBars: 30, testBars: 20, stepBars: 20, purgeWindowBars: 3, embargoBars: 2, mode: 'EXPANDING' });
+  assert.ok(folds.length >= 2);
+  assertWalkForwardIntegrity(folds, 3, 2);
+  for (let i = 1; i < folds.length; i += 1) assert.ok(folds[i - 1].split.testIndices.at(-1)! < folds[i].split.testIndices[0]);
+});
+
+test('research validation: CSCV/PBO is deterministic and detects a dominated selected candidate', () => {
+  const input = { blockCount: 4, candidateReturns: [
+    [0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01],
+    [0.02, 0.02, 0.02, 0.02, -0.02, -0.02, -0.02, -0.02],
+    [-0.01, -0.01, -0.01, -0.01, 0.005, 0.005, 0.005, 0.005],
+  ] };
+  const first = computePboCscv(input);
+  const second = computePboCscv(input);
+  assert.deepEqual(second, first);
+  assert.equal(first.combinationsEvaluated, 6);
+  assert.ok(first.pbo >= 0 && first.pbo <= 1);
+});
+
+test('research validation: regime coverage is computed only on declared evaluation indices', () => {
+  const report = evaluateRegimeCoverage(
+    [0.01, 0.01, -0.02, 0.03, 0.02, -0.01],
+    [1, 2, 4, 5],
+    [
+      { regimeId: 'R1', startIndexInclusive: 0, endIndexExclusive: 2 },
+      { regimeId: 'R2', startIndexInclusive: 2, endIndexExclusive: 4 },
+      { regimeId: 'R3', startIndexInclusive: 4, endIndexExclusive: 6 },
+    ],
+  );
+  assert.equal(report.distinctRegimes, 3);
+  assert.deepEqual(report.evaluations.map((r) => r.regimeId), ['R1', 'R2', 'R3']);
+});
+
+test('research validation: overlapping walk-forward test windows are forbidden', () => {
+  assert.throws(() => createWalkForwardFolds(120, { trainBars: 30, testBars: 20, stepBars: 10, purgeWindowBars: 3, embargoBars: 2, mode: 'EXPANDING' }), /STEP_BARS_MUST_NOT_OVERLAP_TESTS/);
+});
+
+test('research validation: CSCV refuses unbounded combinatorial expansion', () => {
+  assert.throws(() => computePboCscv({ blockCount: 10, maxCombinations: 100, candidateReturns: Array.from({ length: 3 }, () => Array.from({ length: 20 }, () => 0.001)) }), /CSCV_COMBINATION_CAP_EXCEEDED/);
 });

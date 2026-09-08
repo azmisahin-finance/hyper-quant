@@ -50,6 +50,9 @@ jobs:
           test -f src/replay/replay-engine.ts
           test -f src/research/features.ts
           test -f src/research/timeseries.ts
+          test -f src/research/walk-forward.ts
+          test -f src/research/overfitting.ts
+          test -f src/research/regimes.ts
           test -f src/research/cost-model.ts
           test -f src/research/backtest.ts
           test -f spec/reviews/v2.9/v2.9-research-vertical-slice-review.md

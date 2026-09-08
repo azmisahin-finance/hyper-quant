@@ -8,6 +8,7 @@ declare module 'node:test' {
 }
 declare module 'node:fs/promises' {
   export const mkdir: any;
+  export const appendFile: any;
   export const readFile: any;
   export const rm: any;
   export const mkdtemp: any;

@@ -54,7 +54,7 @@ export class HoldoutLedger {
       await mkdir(dirname(this.path), { recursive: true });
       const record = { ...input, programRootId: this.governedRootId, timestamp: new Date().toISOString() };
       await appendFile(this.path, JSON.stringify(record) + '\n', 'utf8');
-      const handle = await open(this.path, 'r');
+      const handle = await open(this.path, 'r+');
       try { await handle.sync(); } finally { await handle.close(); }
     });
     this.writeQueue = operation.catch(() => undefined);

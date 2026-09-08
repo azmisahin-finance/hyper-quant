@@ -26,4 +26,4 @@ async function collect(dir) {
 }
 
 const testFiles = await collect(join(outDir, 'tests'));
-await exec(process.execPath, ['--test', ...testFiles], { cwd: root });
+await exec(process.execPath, ['--test', ...testFiles], { cwd: root, stdio: 'inherit' });

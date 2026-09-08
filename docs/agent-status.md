@@ -13,8 +13,9 @@ This file is the resumable operational state for AI agents and operators. Update
 
 ## Current objective
 
-Implement RPT-04 sealed holdout evaluation certification for BtcTurk
-`BTC/TRY`, read-only/non-live, without changing the review gate.
+Implement the RPT-05 deterministic execution-cost and slippage evidence for
+BtcTurk `BTC/TRY` in `READ_ONLY_NON_LIVE` scope, preserving review status and
+non-live authority boundaries.
 
 ## Completion status
 
@@ -32,6 +33,8 @@ Implement RPT-04 sealed holdout evaluation certification for BtcTurk
   persisted convention, deterministic lineage, and explicit outcomes
 - [x] Add RPT-04 deterministic holdout selection, campaign binding, lineage
   hashes, mutation/leakage checks, and explicit isolation outcomes
+- [x] Add RPT-05 deterministic execution-cost and slippage evidence with
+  explicit support/unsupported-realism blockers in read-only non-live scope
 - [ ] Obtain independent human/adversarial review before any production claim
 
 ## Last validated baseline
@@ -41,7 +44,7 @@ Implement RPT-04 sealed holdout evaluation certification for BtcTurk
 
 ## Immediate next actions
 
-1. Obtain independent review of the RPT-04 contract and fixture outputs.
+1. Obtain independent review of the RPT-05 cost-stress contract and fixture outputs.
 2. Obtain external evidence before claiming physical sealed-holdout isolation.
 3. Keep this ledger updated whenever work continues.
 4. Use `node scripts/agent-status.mjs` as the default status command for the next agent.

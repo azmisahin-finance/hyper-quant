@@ -20,6 +20,11 @@
 - RPT-04 sealed holdout certificate with deterministic selection, campaign and
   reservation binding, lineage hashes, mutation/leakage checks, and explicit
   process/physical isolation statuses
+- RPT-05 deterministic execution-cost and slippage evidence package for
+  BtcTurk `BTC/TRY` in `READ_ONLY_NON_LIVE` scope, binding explicit fee,
+  spread/slippage, latency/staleness, reject, partial-fill, and unsupported
+  real-world blocker outcomes to campaign/input/result/evidence hashes and
+  lineage metadata without claiming live authority
 
 ### Remaining proof obligations
 
@@ -68,7 +73,7 @@ profitability evidence and does not establish live connectivity.
 
 The complete report register and current statuses are in
 [`docs/evidence-reports.md`](evidence-reports.md). `RPT-03` remains `PARTIAL`;
-`RPT-04` remains `PARTIAL`; `RPT-05`, `RPT-06`, `RPT-07`, `RPT-09`, and
-`RPT-11` remain `OPEN`;
-`RPT-08`, `RPT-10`, and `RPT-12` remain `BLOCKED`. RPT-04 remains `PARTIAL`
-because physical sealed-holdout isolation is not proven by this repository.
+`RPT-04` remains `PARTIAL`; `RPT-05` is now `PARTIAL`; `RPT-06`, `RPT-07`,
+`RPT-09`, and `RPT-11` remain `OPEN`; `RPT-08`, `RPT-10`, and `RPT-12`
+remain `BLOCKED`. RPT-04 remains `PARTIAL` because physical sealed-holdout
+isolation is not proven by this repository.

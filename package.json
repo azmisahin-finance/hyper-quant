@@ -13,7 +13,7 @@
   "scripts": {
     "check": "tsc --noEmit",
     "build": "tsc -p tsconfig.prod.json",
-    "test": "rm -rf .build/test && tsc --outDir .build/test --noEmit false && node --test $(find .build/test/tests -name '*.test.js' -print)",
+    "test": "node scripts/run-tests.mjs",
     "lint": "node -e \"console.log('Linting placeholder: implementation not yet promoted from specification review')\""
   },
   "devDependencies": {

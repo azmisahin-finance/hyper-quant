@@ -1,8 +1,10 @@
 # Changelog
 
-## Unreleased — v2.7 review candidate (2026-09-08)
+## Unreleased — v2.8 review candidate (2026-09-08)
 
-- Added v2.7 master specification as the new review candidate; v2.6 remains preserved as the prior immutable review artifact.
+- Added v2.8 as a hardening review candidate while preserving v2.7 and v2.6 as prior review artifacts.
+- Hardened the non-live execution safety kernel with scope-aware kills, authorization-hash validation, fresh-time expiry checks, explicit risk/dependency/policy evaluators, canonical intent transitions, durable intent journal primitives, bounded reconciliation, and cross-platform test execution.
+- Added adversarial tests for scoped kill applicability, expiry races, snapshot tampering, durable intent recovery, and bounded reconciliation. Validation remains `REVIEW_REQUIRED`; no live venue or signing capability is introduced.
 - Added canonical execution intent lifecycle, versioned authorization snapshots, explicit commit-boundary semantics, and `IN_FLIGHT` reconciliation behavior.
 - Added artifact/dependency/build identity binding and fail-closed research-integrity rules.
 - Added program/global/family/lineage holdout-budget controls.

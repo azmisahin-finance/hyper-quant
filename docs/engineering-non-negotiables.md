@@ -4,7 +4,7 @@ This file is the minimum safety contract for anyone implementing HYPER-QUANT.
 
 ## Before writing execution code
 
-1. Treat `spec/versions/v2.7/HYPER-QUANT_MASTER_SPEC_v2.7.md` as a **review candidate**, not an approved production authority.
+1. Treat `spec/versions/v2.8/HYPER-QUANT_MASTER_SPEC_v2.8.md` as a **review candidate**, not an approved production authority.
 2. Do not move a candidate into `spec/master/` unless the review closure protocol explicitly permits promotion.
 3. Do not connect exchange credentials, production wallets, signing keys, or live order endpoints to the current scaffold.
 4. Do not infer that a local process is flat or safe merely because local state says so. Reconcile authoritative venue state.

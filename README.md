@@ -6,13 +6,15 @@
 
 ## Project status
 
-**Current specification:** v2.7 — `REVIEW_REQUIRED`
+**Current specification:** v2.8 — `REVIEW_REQUIRED`
 
 The repository is intentionally public while the specification is still under independent adversarial review. There is **no approved production master specification in this repository yet**.
 
-The canonical v2.7 candidate is:
+The canonical v2.8 candidate is:
 
-`spec/versions/v2.7/HYPER-QUANT_MASTER_SPEC_v2.7.md`
+`spec/versions/v2.8/HYPER-QUANT_MASTER_SPEC_v2.8.md`
+
+The v2.7 specification remains preserved as the prior review artifact.
 
 The `spec/master/` directory will contain the approved canonical master only after the review matrix, document identity, Definition of Done, and independent adversarial review all close successfully.
 
@@ -60,13 +62,17 @@ hyper-quant/
 │   ├── master/
 │   │   └── README.md
 │   ├── versions/
-│   │   └── v2.7/
-│   │       └── HYPER-QUANT_MASTER_SPEC_v2.7.md
+│   │   ├── v2.7/
+│   │   │   └── HYPER-QUANT_MASTER_SPEC_v2.7.md
+│   │   └── v2.8/
+│   │       └── HYPER-QUANT_MASTER_SPEC_v2.8.md
 │   ├── annex/
 │   │   └── statistical-methods-v1.md
 │   └── reviews/
-│       └── v2.7/
-│           └── v2.7-adversarial-review.md
+│       ├── v2.7/
+│       │   └── v2.7-adversarial-review.md
+│       └── v2.8/
+│           └── v2.8-adversarial-review.md
 ├── docs/
 │   ├── architecture.md
 │   ├── research-lifecycle.md
@@ -77,17 +83,23 @@ hyper-quant/
 │   ├── README.md
 │   └── execution/
 │       ├── barrier.ts
-│       └── mutation-coordinator.ts
+│       ├── intent-journal.ts
+│       ├── intent-state-machine.ts
+│       ├── mutation-coordinator.ts
+│       ├── reconciliation.ts
+│       └── safety-authority.ts
 ├── tests/
 │   ├── README.md
 │   ├── adversarial/
 │   │   ├── deterministic-barrier.ts
+│   │   ├── intent-contracts.test.ts
 │   │   └── toctou-kill-race.test.ts
 │   └── unit/
 │       └── spec-status.test.ts
+├── scripts/
+│   └── run-tests.mjs
 ├── tsconfig.prod.json
-├── types/
-│   └── node-shims.d.ts
+├── tsconfig.json
 ├── configs/
 │   ├── README.md
 │   └── .env.example
@@ -105,7 +117,7 @@ hyper-quant/
 
 Never commit API keys, private keys, seed phrases, exchange credentials, personal account exports, production secrets, or unredacted sensitive logs.
 
-Production signing material is intentionally outside the research/AI plane. The execution race scaffold is non-live; see `SECURITY.md` and the v2.7 specification for the normative controls.
+Production signing material is intentionally outside the research/AI plane. The execution safety scaffold is non-live; see `SECURITY.md` and the v2.8 specification for the normative controls.
 
 ## License
 

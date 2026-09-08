@@ -6,7 +6,7 @@ The repository currently contains a **review candidate**, not an approved master
 
 Current candidate:
 
-`../versions/v2.7/HYPER-QUANT_MASTER_SPEC_v2.7.md`
+`../versions/v2.8/HYPER-QUANT_MASTER_SPEC_v2.8.md`
 
 Current state: `REVIEW_REQUIRED`
 

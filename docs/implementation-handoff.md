@@ -10,7 +10,7 @@ The repository is intentionally usable as a starting point for a new engineer, b
 
 Current candidate specification:
 
-`spec/versions/v2.7/HYPER-QUANT_MASTER_SPEC_v2.7.md`
+`spec/versions/v2.8/HYPER-QUANT_MASTER_SPEC_v2.8.md`
 
 Current status:
 
@@ -60,6 +60,6 @@ Every material design change should identify:
 When evidence is insufficient, stop at `REVIEW_REQUIRED` rather than inventing an assumption.
 
 
-## v2.7 implementation boundary
+## v2.8 implementation boundary
 
-The current scaffold implements only the local deterministic authorization/race contract. It does not submit orders, sign payloads, connect credentials, or access a production venue. `DeterministicBarrier` and test mutation executors are test-only and must remain outside production builds.
+The current scaffold implements a hardened local deterministic safety contract plus intent/reconciliation primitives. It does not submit orders, sign payloads, connect credentials, or access a production venue. `DeterministicBarrier` and test mutation executors are test-only and remain outside production builds. The durable journal is a repository-level primitive; venue/database/filesystem production proof remains outstanding.

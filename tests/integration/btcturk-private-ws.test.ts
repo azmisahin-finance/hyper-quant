@@ -22,7 +22,8 @@ test('private websocket parser normalizes order insert/update/delete and trade/m
 });
 
 test('private session requires authenticated login before trusted private state', async () => {
-  const s = new BtcTurkPrivateObservationSession('p1');
+  const forwarded: string[] = [];
+  const s = new BtcTurkPrivateObservationSession('p1', { onEvent: (event) => { forwarded.push(event.kind); } });
   const sock = socket();
   await s.connect(sock, { publicKey: 'PUB', privateKeyBase64: 'c2VjcmV0', nonce: 3000, timestampMs: 1700000000000 });
   assert.equal(s.getPhase(), 'AUTHENTICATING');
@@ -31,6 +32,9 @@ test('private session requires authenticated login before trusted private state'
   assert.equal(s.requiresResync(), true);
   s.markResyncComplete();
   assert.equal(s.requiresResync(), false);
+  assert.equal(s.snapshot().privateObservationCount, 1);
+  assert.deepEqual(forwarded, []);
+  await assert.rejects(() => s.handleMessage(JSON.stringify([114, { type: 114, ok: true, message: 'duplicate' }])), /LOGIN_EVENT_OUTSIDE_AUTHENTICATION/);
 });
 
 test('private session rejects login failure and stays resync-required', async () => {

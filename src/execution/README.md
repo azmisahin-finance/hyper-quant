@@ -23,3 +23,9 @@ The non-live execution layer includes deterministic order-book state, queue-awar
 ## Venue reconciliation
 
 The v2.9 execution plane keeps venue observation and local paper state separate. `VenueObservationTracker` requires resynchronization after reconnects or sequence gaps. `VenueReconciliationController` uses read-only venue adapter methods and fails closed when exact remote fill/remaining quantities are unavailable or account totals violate `free + locked = total`. Live mutation remains outside this layer.
+
+## REST + private WebSocket convergence
+
+`VenueConvergenceEngine` starts each epoch from a read-only REST snapshot. Its account hash is explicitly a REST anchor: private WebSocket messages neither construct nor infer account balances. The fresh `getOpenOrders` comparison proves active-order state only; absence from that endpoint never proves an order was filled, cancelled, rejected, or expired.
+
+Private trade and match messages are retained as identity-bound evidence, not treated as a cumulative filled quantity on their own. Only an exact subsequent REST active-order snapshot may corroborate the delta. Reconnects, missing identities, terminal/delete notifications, unsupported statuses, time regressions, and duplicate evidence fail closed and require a new REST bootstrap. The session's local observation count is audit metadata only, never a venue sequence.

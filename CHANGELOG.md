@@ -1,6 +1,6 @@
 
 ## Next
-- Add read-only BtcTurk private WebSocket observation with HMAC login, private order/trade normalization, and fail-closed pre-auth handling.
+- Added Aşama 16 REST + private WebSocket convergence: REST account anchors, active-order-only snapshots, identity/quantity/time checks, duplicate trade evidence detection, reconnect/resync invalidation, deterministic convergence reports, and no mutation capability.
 # Changelog
 
 ## Unreleased — v2.9 review candidate (2026-09-08)

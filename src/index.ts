@@ -62,6 +62,7 @@ export * from './execution/shadow-execution.js';
 
 export * from './execution/paper-execution.js';
 export * from './execution/venue-reconciliation-controller.js';
+export * from './execution/venue-convergence.js';
 
 export * from './data/btcturk-ws-session.js';
 export * from './data/btcturk-private-ws.js';

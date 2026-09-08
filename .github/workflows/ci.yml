@@ -48,6 +48,11 @@ jobs:
           test -f src/venues/btcturk-spot-adapter.ts
           test -f src/data/immutable-event-log.ts
           test -f src/replay/replay-engine.ts
+          test -f src/research/features.ts
+          test -f src/research/timeseries.ts
+          test -f src/research/cost-model.ts
+          test -f src/research/backtest.ts
+          test -f spec/reviews/v2.9/v2.9-research-vertical-slice-review.md
           test -f docs/implementation-progress.md
           test -f spec/annex/statistical-methods-v1.md
 

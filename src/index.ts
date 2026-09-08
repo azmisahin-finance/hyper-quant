@@ -31,3 +31,8 @@ export * from './data/immutable-event-log.js';
 export * from './data/market-data-recorder.js';
 export * from './data/btcturk-ws.js';
 export * from './replay/replay-engine.js';
+
+export * from './research/timeseries.js';
+export * from './research/features.js';
+export * from './research/cost-model.js';
+export * from './research/backtest.js';

@@ -131,4 +131,4 @@ HYPER-QUANT is software and research infrastructure, not financial advice. Tradi
 
 ## Implementation status
 
-The TypeScript scaffold is intentionally non-trading and non-signing while the specification remains under review. No exchange order submission is implemented in this repository scaffold.
+The TypeScript scaffold is intentionally non-trading and non-signing while the specification remains under review. The current v2.9 implementation includes a deterministic market-data/replay path and a non-live research backtest harness. No exchange order submission is implemented in this repository scaffold.

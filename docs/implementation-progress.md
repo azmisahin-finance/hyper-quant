@@ -25,3 +25,9 @@ An immutable, fsync-backed, hash-chained event log and deterministic replay redu
 ## External evidence
 
 The BtcTurk implementation follows the documented public endpoints for exchange information and ticker/order book data and documented authenticated V1 paths for balances/open orders/order lookup. BtcTurk documents HMAC-SHA256 authentication with `X-PCK`, `X-Stamp`, and `X-Signature`, and documents that cancel requests receive an immediate 200 acknowledgement while final cancellation status is delivered asynchronously over WebSocket; those semantics remain integration-test obligations before any mutation gateway is introduced.
+
+## Research vertical slice — baseline harness
+
+The next implementation slice is now executable: historical market bars are validated for strict timestamp ordering, features are computed using only the prefix available at each decision time, purged/embargoed time-series splits enforce leakage boundaries, and a deterministic non-live baseline backtest applies signals only on a later execution bar with explicit fee/slippage costs and optional bar latency.
+
+The baseline mean-reversion strategy is a falsification/continuity benchmark only. It is not a promoted strategy and its results do not constitute evidence of economic edge. Statistical promotion remains gated by the existing statistical evidence controls and, for final out-of-sample evaluation, by the holdout ledger and research-trial governance.

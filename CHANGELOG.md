@@ -28,3 +28,11 @@
 - Reframed the system as a disciplined individual quantitative research program with firm-grade safety rather than an assumed institutional edge.
 
 Status: `REVIEW_REQUIRED`
+
+## Unreleased — v2.9 research vertical slice
+
+- Added deterministic, time-aligned feature engine with finite lookback enforcement.
+- Added hard purged/embargoed time-series split primitive.
+- Added explicit fee/slippage cost model.
+- Added deterministic non-live baseline backtest with execution latency and result hashing.
+- Added adversarial tests for timestamp ordering, purge/embargo violations, cost sensitivity, determinism, and delayed execution.

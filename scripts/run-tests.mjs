@@ -23,7 +23,7 @@ function runNode(args) {
 }
 
 await rm(outDir, { recursive: true, force: true });
-const tscEntry = join(root, 'node_modules', 'typescript', 'lib', 'tsc.js');
+const tscEntry = join(root, 'node_modules', 'typescript', 'bin', 'tsc');
 await runNode([tscEntry, '--outDir', outDir, '--noEmit', 'false']);
 
 async function collect(dir) {

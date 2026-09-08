@@ -47,6 +47,8 @@ Key files:
 - `docs/agent-runbook.md` — task execution, review gates, and resume procedure.
 - `docs/specification-governance.md` — role accountabilities, lifecycle gates,
   decision rights, escalation, and AI autonomy boundaries.
+- `docs/stakeholder-master-execution-plan.md` — canonical stakeholder roadmap,
+  task register, proof obligations, phase gates, reporting, and handoff rules.
 - `docs/agent-status.md` — active handoff and resumable state ledger.
 - `scripts/agent-status.mjs` — deterministic status command for current repo health and next actions.
 
@@ -97,6 +99,7 @@ hyper-quant/
 │           └── v2.9-adversarial-review.md
 ├── docs/
 │   ├── architecture.md
+│   ├── stakeholder-master-execution-plan.md
 │   ├── specification-governance.md
 │   ├── research-lifecycle.md
 │   └── deployment-gates.md

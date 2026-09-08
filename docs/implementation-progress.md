@@ -33,3 +33,7 @@ The reference implementation now contains a durable non-live `ResearchCampaignRu
 ### v2.9 controlled holdout / promotion boundary
 
 The non-live implementation now requires a finalized passing campaign before holdout evaluation, binds the selected candidate and selection evidence to the holdout reservation/evidence hash, prevents raw holdout-shaped payloads from crossing the opaque result boundary, and refuses to construct promotion evidence from FAIL/INCONCLUSIVE holdout results. Physical sealed-holdout storage/process isolation and post-holdout adaptive-search sealing remain open proof obligations.
+
+### v2.9 full research evidence engine
+
+The reference implementation now constructs a single tamper-evident evidence package from finalized campaign selection, controlled holdout evidence, selected return series, walk-forward validation, CSCV/PBO, PSR/DSR, regime coverage, cost stress, and the statistical promotion decision. A durable evidence ledger prevents duplicate final packages for a campaign and serializes concurrent writes. Final holdout physical/process isolation, live venue reconciliation, and signer isolation remain proof obligations outside the non-live reference boundary.

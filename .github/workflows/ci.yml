@@ -58,6 +58,8 @@ jobs:
           test -f spec/reviews/v2.9/v2.9-research-vertical-slice-review.md
           test -f spec/reviews/v2.9/v2.9-campaign-orchestration-review.md
           test -f src/research/research-runner.ts
+          test -f src/research/psr.ts
+          test -f src/research/evidence-engine.ts
           test -f src/research/controlled-holdout.ts
           test -f src/research/promotion-evidence.ts
           test -f spec/reviews/v2.9/v2.9-holdout-promotion-boundary-review.md

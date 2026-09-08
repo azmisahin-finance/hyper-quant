@@ -4,6 +4,7 @@ import { deriveDependencyManifest, enforceDeclaredLookback, type FeatureNode } f
 import { assertArtifactIdentity, type ArtifactIdentityChain } from './artifact-identity.js';
 import { validateStatisticalEvidence, type StatisticalDecision, type StatisticalPolicy } from './statistics.js';
 import { HoldoutLedger, type HoldoutEvaluationInput } from './holdout-ledger.js';
+import { computeDeflatedSharpeRatio } from './dsr.js';
 import type { WalkForwardFold } from './walk-forward.js';
 import type { CsCvResult } from './overfitting.js';
 import type { RegimeCoverageReport } from './regimes.js';
@@ -28,6 +29,8 @@ export type ResearchEvidence = {
   regimeIds: readonly string[];
   stressedNetExpectancy: number;
   statistical: StatisticalEvidenceInput;
+  selectedReturns: readonly number[];
+  dsrResult?: { method: 'CLASSIC_DSR_LS'; sampleCount: number; committedTrialCount: number; dsr: number };
 };
 
 type StatisticalEvidenceInput = {
@@ -79,6 +82,14 @@ function validateResearchEvidence(evidence: ResearchEvidence, policy: ResearchPo
   if (distinctRegimes !== new Set(evidence.regimeIds).size) throw new Error('REGIME_EVIDENCE_MISMATCH');
   if (distinctRegimes < policy.minDistinctRegimes) throw new Error('REGIME_COVERAGE_FAILED');
   if (!Number.isFinite(evidence.stressedNetExpectancy) || evidence.stressedNetExpectancy <= 0) throw new Error('COST_STRESS_FAILED');
+  if (evidence.selectedReturns.length !== evidence.statistical.sampleCount) throw new Error('DSR_SAMPLE_COUNT_MISMATCH');
+  const computedDsr = computeDeflatedSharpeRatio({ returns: evidence.selectedReturns, committedTrialCount });
+  if (!evidence.dsrResult) throw new Error('DSR_COMPUTED_EVIDENCE_REQUIRED');
+  if (evidence.dsrResult.committedTrialCount !== committedTrialCount) throw new Error('DSR_TRIAL_COUNT_MISMATCH');
+  if (evidence.dsrResult.sampleCount !== computedDsr.sampleCount) throw new Error('DSR_SAMPLE_COUNT_MISMATCH');
+  if (evidence.dsrResult.method !== computedDsr.method) throw new Error('DSR_METHOD_MISMATCH');
+  if (Math.abs(evidence.dsrResult.dsr - computedDsr.dsr) > 1e-12) throw new Error('DSR_EVIDENCE_MISMATCH');
+  if (Math.abs(evidence.statistical.dsr - computedDsr.dsr) > 1e-12) throw new Error('DSR_STATISTICAL_MISMATCH');
   const statistical = { ...evidence.statistical, declaredTrialCount: committedTrialCount };
   return validateStatisticalEvidence(statistical, policy);
 }
@@ -104,6 +115,7 @@ export class ResearchRunner {
         await this.holdoutLedger.reserve(spec.holdoutEvaluation, holdoutReservationId);
       }
       let outcome: ResearchTrialOutcome['outcome'] = 'CRASHED';
+      let terminalRecorded = false;
       try {
         const computed = await compute();
         const trialCount = await this.ledger.countRegisteredTrials(spec.receipt.researchProgramId);
@@ -112,6 +124,7 @@ export class ResearchRunner {
           decision = validateResearchEvidenceForPromotion(computed.evidence, this.policy, trialCount);
         } catch (gateError) {
           await this.ledger.recordOutcome({ ...spec.receipt, outcome: 'FAIL', completedAt: new Date().toISOString() });
+          terminalRecorded = true;
           if (holdoutReservationId) await this.holdoutLedger!.finalizeReservation(holdoutReservationId, 'FAIL');
           throw gateError;
         }
@@ -119,9 +132,10 @@ export class ResearchRunner {
         if (holdoutReservationId) await this.holdoutLedger!.finalizeReservation(holdoutReservationId, outcome === 'PASS' ? 'PASS' : 'FAIL');
         const evidenceHash = createHash('sha256').update(JSON.stringify({ receipt: spec.receipt, evidence: computed.evidence, trialCount, decision })).digest('hex');
         await this.ledger.recordOutcome({ ...spec.receipt, outcome, completedAt: new Date().toISOString() });
+        terminalRecorded = true;
         return { value: computed.value, outcome, trialCountAtCompletion: trialCount, evidenceDecision: decision, evidenceHash };
       } catch (error) {
-        if (outcome === 'CRASHED') {
+        if (outcome === 'CRASHED' && !terminalRecorded) {
           await this.ledger.recordOutcome({ ...spec.receipt, outcome: 'CRASHED', completedAt: new Date().toISOString() });
           if (holdoutReservationId) await this.holdoutLedger!.finalizeReservation(holdoutReservationId, 'INCONCLUSIVE');
         }

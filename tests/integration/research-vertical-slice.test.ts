@@ -9,6 +9,7 @@ import { ResearchTrialLedger, type ResearchTrialReceipt } from '../../src/resear
 import { buildArtifactIdentityChain } from '../../src/research/artifact-identity.js';
 import { createPurgedSplit } from '../../src/research/timeseries.js';
 import { runDeterministicBacktest, createZScoreMeanReversionStrategy } from '../../src/research/backtest.js';
+import { computeDeflatedSharpeRatio } from '../../src/research/dsr.js';
 
 function bars(count = 30): ResearchBar[] {
   return Array.from({ length: count }, (_, index) => {
@@ -104,7 +105,9 @@ test('research governance: runner registers receipt before compute and counts co
     let computeSawReceipt = false;
     const result = await runner.run({ receipt: receipt('T1'), featureNodes: [{ id: 'z', inputs: ['close'], lookback: 5, labelHorizon: 1 }], declaredLookback: 5, artifactExpected: artifact(), artifactExecuted: artifact(), holdout: false }, async () => {
       computeSawReceipt = await ledger.hasReceipt('T1');
-      return { value: 7, evidence: { effectiveOosOpportunities: 200, walkForward: { folds: [{ foldId: 0, trainStartIndex: 0, testEndIndexExclusive: 100, split: { trainIndices: [0], testIndices: [10, 11], purgedIndices: [8], embargoedIndices: [9] } }, { foldId: 1, trainStartIndex: 0, testEndIndexExclusive: 120, split: { trainIndices: [0], testIndices: [20, 21], purgedIndices: [18], embargoedIndices: [19] } }], effectiveOosOpportunities: 200 }, pboCscv: { pbo: 0.05, combinationsEvaluated: 6 }, regimeCoverage: { distinctRegimes: 3 }, pbo: 0.05, contiguousBlockNetReturns: [1, 1, 1, 1], calendarWeekNetReturns: [1, 1, 1, 1], regimeIds: ['R1', 'R2', 'R3'], stressedNetExpectancy: 1, statistical: { meanTradeExpectancy: 1, sampleCount: 200, sampleStdDev: 1, dsr: 0.99 } } };
+      const returns = Array.from({ length: 200 }, (_, i) => i % 2 === 0 ? 0.011 : 0.009);
+      const dsr = computeDeflatedSharpeRatio({ returns, committedTrialCount: 1 });
+      return { value: 7, evidence: { effectiveOosOpportunities: 200, walkForward: { folds: [{ foldId: 0, trainStartIndex: 0, testEndIndexExclusive: 100, split: { trainIndices: [0], testIndices: [10, 11], purgedIndices: [8], embargoedIndices: [9] } }, { foldId: 1, trainStartIndex: 0, testEndIndexExclusive: 120, split: { trainIndices: [0], testIndices: [20, 21], purgedIndices: [18], embargoedIndices: [19] } }], effectiveOosOpportunities: 200 }, pboCscv: { pbo: 0.05, combinationsEvaluated: 6 }, regimeCoverage: { distinctRegimes: 3 }, pbo: 0.05, contiguousBlockNetReturns: [1, 1, 1, 1], calendarWeekNetReturns: [1, 1, 1, 1], regimeIds: ['R1', 'R2', 'R3'], stressedNetExpectancy: 1, selectedReturns: returns, statistical: { meanTradeExpectancy: 1, sampleCount: 200, sampleStdDev: 0.001005037815259212, dsr: dsr.dsr }, dsrResult: { method: dsr.method, sampleCount: dsr.sampleCount, committedTrialCount: dsr.committedTrialCount, dsr: dsr.dsr } } };
     });
     assert.equal(computeSawReceipt, true);
     assert.equal(result.outcome, 'PASS');
@@ -113,8 +116,29 @@ test('research governance: runner registers receipt before compute and counts co
 });
 
 test('research governance: statistical trial count comes from committed ledger, not analyst input', async () => {
+  const returns = Array.from({ length: 200 }, (_, i) => i % 2 === 0 ? 0.011 : 0.009);
+  const dsr = computeDeflatedSharpeRatio({ returns, committedTrialCount: 2 });
   const decision = validateResearchEvidenceForPromotion(
-    { effectiveOosOpportunities: 200, walkForward: { folds: [{ foldId: 0, trainStartIndex: 0, testEndIndexExclusive: 100, split: { trainIndices: [0], testIndices: [10, 11], purgedIndices: [8], embargoedIndices: [9] } }, { foldId: 1, trainStartIndex: 0, testEndIndexExclusive: 120, split: { trainIndices: [0], testIndices: [20, 21], purgedIndices: [18], embargoedIndices: [19] } }], effectiveOosOpportunities: 200 }, pboCscv: { pbo: 0.05, combinationsEvaluated: 6 }, regimeCoverage: { distinctRegimes: 3 }, pbo: 0.05, contiguousBlockNetReturns: [1, 1], calendarWeekNetReturns: [1, 1], regimeIds: ['R1', 'R2', 'R3'], stressedNetExpectancy: 1, statistical: { meanTradeExpectancy: 1, sampleCount: 200, sampleStdDev: 1, dsr: 0.99 } },
+    {
+      effectiveOosOpportunities: 200,
+      walkForward: {
+        folds: [
+          { foldId: 0, trainStartIndex: 0, testEndIndexExclusive: 100, split: { trainIndices: [0], testIndices: [10, 11], purgedIndices: [8], embargoedIndices: [9] } },
+          { foldId: 1, trainStartIndex: 0, testEndIndexExclusive: 120, split: { trainIndices: [0], testIndices: [20, 21], purgedIndices: [18], embargoedIndices: [19] } },
+        ],
+        effectiveOosOpportunities: 200,
+      },
+      pboCscv: { pbo: 0.05, combinationsEvaluated: 6 },
+      regimeCoverage: { distinctRegimes: 3 },
+      pbo: 0.05,
+      contiguousBlockNetReturns: [1, 1],
+      calendarWeekNetReturns: [1, 1],
+      regimeIds: ['R1', 'R2', 'R3'],
+      stressedNetExpectancy: 1,
+      selectedReturns: returns,
+      statistical: { meanTradeExpectancy: 1, sampleCount: 200, sampleStdDev: 0.001005037815259212, dsr: dsr.dsr },
+      dsrResult: { method: dsr.method, sampleCount: dsr.sampleCount, committedTrialCount: dsr.committedTrialCount, dsr: dsr.dsr },
+    },
     researchPolicy(),
     2,
   );

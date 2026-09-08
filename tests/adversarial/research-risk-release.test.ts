@@ -91,3 +91,35 @@ test('Research governance: trial receipt is required before outcome', async () =
     assert.equal(await ledger.hasReceipt('T1'), true);
   } finally { await rm(root, { recursive: true, force: true }); }
 });
+
+test('research validation: DSR is computed from returns and committed trial count, not analyst-supplied DSR', async () => {
+  const { computeDeflatedSharpeRatio } = await import('../../src/research/dsr.js');
+  const returns = Array.from({ length: 80 }, (_, i) => (i % 9 === 0 ? 0.03 : 0.004));
+  const lowerTrialDsr = computeDeflatedSharpeRatio({ returns, committedTrialCount: 5 });
+  const higherTrialDsr = computeDeflatedSharpeRatio({ returns, committedTrialCount: 500 });
+  assert.ok(lowerTrialDsr.dsr >= higherTrialDsr.dsr);
+  assert.equal(lowerTrialDsr.sampleCount, returns.length);
+  assert.equal(higherTrialDsr.committedTrialCount, 500);
+  assert.notEqual(lowerTrialDsr.expectedMaxSharpe, higherTrialDsr.expectedMaxSharpe);
+});
+
+test('research validation: search diagnostics bind selected returns, PBO, and computed DSR', async () => {
+  const { runSearchCampaignDiagnostics } = await import('../../src/research/search-diagnostics.js');
+  const candidateReturns = [
+    Array.from({ length: 24 }, (_, i) => (i < 12 ? 0.01 : -0.005)),
+    Array.from({ length: 24 }, () => 0.004),
+    Array.from({ length: 24 }, (_, i) => (i % 4 === 0 ? 0.02 : 0.001)),
+  ];
+  const result = runSearchCampaignDiagnostics({ candidateReturns, selectedCandidateIndex: 1, blockCount: 4, committedTrialCount: 3 });
+  assert.equal(result.selectedReturns.length, 24);
+  assert.equal(result.committedTrialCount, 3);
+  assert.equal(result.pboCscv.combinationsEvaluated, 6);
+  assert.equal(result.dsr.committedTrialCount, 3);
+  assert.match(result.resultHash, /^[0-9a-f]{64}$/);
+});
+
+test('research validation: DSR rejects non-finite and zero-variance returns', async () => {
+  const { computeDeflatedSharpeRatio } = await import('../../src/research/dsr.js');
+  assert.throws(() => computeDeflatedSharpeRatio({ returns: [0.01, Number.NaN, 0.02], committedTrialCount: 2 }), /NON_FINITE_DSR_RETURN/);
+  assert.throws(() => computeDeflatedSharpeRatio({ returns: [0.01, 0.01, 0.01], committedTrialCount: 2 }), /ZERO_DSR_VARIANCE/);
+});

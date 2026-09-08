@@ -12,6 +12,12 @@ The adapter preserves the venue profile as a versioned capability object and nor
 
 Live order submission and cancellation are deliberately rejected at the adapter boundary. They require the canonical `MutationCoordinator`, an externally controlled signer/authentication boundary, and an explicit mutation gateway. This prevents a venue client from becoming an accidental bypass around the safety kernel.
 
+## Phase 3 data vertical slice
+
+The current v2.9 implementation now includes a normalized market-data recorder and a BtcTurk WebSocket decoder for documented ticker, trade, full order-book, order-book-difference, and subscription models. Recorded events enter the immutable hash-chained log through a serialized append queue so concurrent writers cannot fork sequence/hash state. WebSocket timestamps use venue-provided millisecond timestamps when documented and an injected receive clock otherwise, keeping parser behavior testable and deterministic.
+
+Live WebSocket connectivity is not yet certified in this environment. The adapter therefore remains contract-tested only; no production mutation capability is enabled.
+
 ## Phase 3/4 starting point
 
 An immutable, fsync-backed, hash-chained event log and deterministic replay reducer are now available as repository primitives. They are suitable for recorded market-data sessions and deterministic research/replay tests, but production storage durability and recorder deployment remain unverified.

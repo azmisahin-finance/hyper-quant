@@ -13,27 +13,33 @@ export type ImmutableEvent = {
 };
 
 export class ImmutableEventLog {
+  private writeQueue: Promise<unknown> = Promise.resolve();
+
   constructor(private readonly filePath: string) {}
 
   async append(event: Omit<ImmutableEvent, 'sequence' | 'previousHash' | 'hash'>): Promise<ImmutableEvent> {
-    const current = await this.readAll();
-    const previous = current.at(-1);
-    const next: Omit<ImmutableEvent, 'hash'> = {
-      ...event,
-      sequence: (previous?.sequence ?? 0) + 1,
-      previousHash: previous?.hash ?? 'GENESIS',
-    };
-    const hash = createHash('sha256').update(JSON.stringify(next)).digest('hex');
-    const complete = { ...next, hash };
-    await mkdir(dirname(this.filePath), { recursive: true });
-    const handle = await open(this.filePath, 'a');
-    try {
-      await handle.writeFile(`${JSON.stringify(complete)}\n`, 'utf8');
-      await handle.sync();
-    } finally {
-      await handle.close();
-    }
-    return complete;
+    const run = this.writeQueue.then(async () => {
+      const current = await this.readAll();
+      const previous = current.at(-1);
+      const next: Omit<ImmutableEvent, 'hash'> = {
+        ...event,
+        sequence: (previous?.sequence ?? 0) + 1,
+        previousHash: previous?.hash ?? 'GENESIS',
+      };
+      const hash = createHash('sha256').update(JSON.stringify(next)).digest('hex');
+      const complete = { ...next, hash };
+      await mkdir(dirname(this.filePath), { recursive: true });
+      const handle = await open(this.filePath, 'a');
+      try {
+        await handle.writeFile(`${JSON.stringify(complete)}\n`, 'utf8');
+        await handle.sync();
+      } finally {
+        await handle.close();
+      }
+      return complete;
+    });
+    this.writeQueue = run.catch(() => undefined);
+    return run;
   }
 
   async readAll(): Promise<ImmutableEvent[]> {

@@ -28,4 +28,6 @@ export * from './venues/types.js';
 export * from './venues/btcturk-http.js';
 export * from './venues/btcturk-spot-adapter.js';
 export * from './data/immutable-event-log.js';
+export * from './data/market-data-recorder.js';
+export * from './data/btcturk-ws.js';
 export * from './replay/replay-engine.js';

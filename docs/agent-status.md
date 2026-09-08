@@ -5,7 +5,7 @@ This file is the resumable operational state for AI agents and operators. Update
 ## Current project state
 
 - Repository: `azmisahin-finance/hyper-quant`
-- Current branch: `azmisahin-role-operating-model`
+- Current branch: `azmisahin-research-campaign-integrity`
 - Spec version: `v2.9`
 - Review status: `REVIEW_REQUIRED`
 - Live trading status: `PROHIBITED`
@@ -13,10 +13,8 @@ This file is the resumable operational state for AI agents and operators. Update
 
 ## Current objective
 
-Establish a durable multi-perspective operating model so a future AI agent or
-operator can understand role accountabilities, lifecycle gates, decision rights,
-escalation, reporting, and post-operation obligations without weakening the v2.9
-review boundary.
+Harden the non-live research operating system for deterministic statistical
+conventions and same-path campaign, trial, and holdout concurrency behavior.
 
 ## Completion status
 
@@ -26,6 +24,7 @@ review boundary.
 - [x] Create the agent runbook and operational boundaries
 - [x] Add a deterministic repo status/script for future agents
 - [x] Add the multi-perspective specification governance and operating model
+- [x] Serialize same-path research ledger writers and persist DSR convention
 - [ ] Obtain independent human/adversarial review before any production claim
 
 ## Last validated baseline
@@ -35,7 +34,8 @@ review boundary.
 
 ## Immediate next actions
 
-1. Obtain independent review of `docs/specification-governance.md`.
+1. Obtain independent review of the research ledger concurrency and DSR
+   convention hardening.
 2. Keep this ledger updated whenever work continues.
 3. Use `node scripts/agent-status.mjs` as the default status command for the next agent.
 

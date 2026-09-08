@@ -19,7 +19,16 @@ export type ResearchTrialOutcome = ResearchTrialReceipt & {
 };
 
 export class ResearchTrialLedger {
+  private static readonly writeQueues = new Map<string, Promise<void>>();
+
   constructor(private readonly path: string) {}
+
+  private enqueue<T>(operation: () => Promise<T>): Promise<T> {
+    const previous = ResearchTrialLedger.writeQueues.get(this.path) ?? Promise.resolve();
+    const current = previous.then(operation, operation);
+    ResearchTrialLedger.writeQueues.set(this.path, current.then(() => undefined, () => undefined));
+    return current;
+  }
 
   private async lines(): Promise<unknown[]> {
     try {
@@ -45,18 +54,22 @@ export class ResearchTrialLedger {
 
   async registerBeforeRun(receipt: ResearchTrialReceipt): Promise<void> {
     if (!receipt.trialId || !receipt.researchProgramId || !receipt.hypothesisId || !receipt.codeHash || !receipt.configHash || !receipt.datasetHash || !receipt.selectionPolicyHash) throw new Error('INVALID_TRIAL_RECEIPT');
-    const existing = (await this.lines()).find((item) => (item as { trialId?: string }).trialId === receipt.trialId);
-    if (existing) throw new Error('TRIAL_ID_ALREADY_REGISTERED');
-    await this.append({ kind: 'TRIAL_RECEIPT', ...receipt });
+    return this.enqueue(async () => {
+      const existing = (await this.lines()).find((item) => (item as { trialId?: string }).trialId === receipt.trialId);
+      if (existing) throw new Error('TRIAL_ID_ALREADY_REGISTERED');
+      await this.append({ kind: 'TRIAL_RECEIPT', ...receipt });
+    });
   }
 
   async recordOutcome(outcome: ResearchTrialOutcome): Promise<void> {
-    const records = await this.lines();
-    const registered = records.some((item) => (item as { kind?: string; trialId?: string }).kind === 'TRIAL_RECEIPT' && (item as { trialId?: string }).trialId === outcome.trialId);
-    if (!registered) throw new Error('TRIAL_RECEIPT_REQUIRED_BEFORE_OUTCOME');
-    const alreadyTerminal = records.some((item) => (item as { kind?: string; trialId?: string }).kind === 'TRIAL_OUTCOME' && (item as { trialId?: string }).trialId === outcome.trialId);
-    if (alreadyTerminal) throw new Error('TRIAL_OUTCOME_ALREADY_RECORDED');
-    await this.append({ kind: 'TRIAL_OUTCOME', ...outcome });
+    return this.enqueue(async () => {
+      const records = await this.lines();
+      const registered = records.some((item) => (item as { kind?: string; trialId?: string }).kind === 'TRIAL_RECEIPT' && (item as { trialId?: string }).trialId === outcome.trialId);
+      if (!registered) throw new Error('TRIAL_RECEIPT_REQUIRED_BEFORE_OUTCOME');
+      const alreadyTerminal = records.some((item) => (item as { kind?: string; trialId?: string }).kind === 'TRIAL_OUTCOME' && (item as { trialId?: string }).trialId === outcome.trialId);
+      if (alreadyTerminal) throw new Error('TRIAL_OUTCOME_ALREADY_RECORDED');
+      await this.append({ kind: 'TRIAL_OUTCOME', ...outcome });
+    });
   }
 
   async countRegisteredTrials(researchProgramId: string): Promise<number> {

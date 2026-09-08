@@ -7,9 +7,12 @@ import { join } from 'node:path';
 const exec = promisify(execFile);
 const root = process.cwd();
 const outDir = join(root, '.build', 'test');
+const tscEntry = join(root, 'node_modules', 'typescript', 'bin', 'tsc');
 
 await rm(outDir, { recursive: true, force: true });
-await exec(process.platform === 'win32' ? 'tsc.cmd' : 'tsc', ['--outDir', outDir, '--noEmit', 'false'], { cwd: root });
+// Invoke TypeScript through the Node runtime instead of tsc.cmd. This keeps the
+// runner cross-platform and avoids Windows Node 24 spawn(EINVAL) on .cmd shims.
+await exec(process.execPath, [tscEntry, '--outDir', outDir, '--noEmit', 'false'], { cwd: root });
 
 async function collect(dir) {
   const entries = await readdir(dir, { withFileTypes: true });

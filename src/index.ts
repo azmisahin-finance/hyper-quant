@@ -56,3 +56,6 @@ export * from './execution/order-lifecycle-journal.js';
 export * from './execution/order-book.js';
 export * from './execution/order-management.js';
 export * from './execution/resting-order-book.js';
+export * from './execution/latency-model.js';
+export * from './execution/impact-model.js';
+export * from './execution/shadow-execution.js';

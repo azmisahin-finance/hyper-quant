@@ -10,7 +10,7 @@ submit orders, move capital, or authorize promotion.
 | RPT-02 | Reproducibility and Data Lineage Certificate | PARTIAL |
 | RPT-03 | Independent Statistical Evidence Package | PARTIAL |
 | RPT-04 | Sealed Holdout Evaluation Certificate | PARTIAL |
-| RPT-05 | Execution Cost and Slippage Report | OPEN |
+| RPT-05 | Execution Cost and Slippage Report | PARTIAL |
 | RPT-06 | Walk-Forward Validation Report | OPEN |
 | RPT-07 | Overfitting and PBO Diagnostic Report | OPEN |
 | RPT-08 | Holdout Evaluation Report | BLOCKED |
@@ -42,3 +42,13 @@ physical isolation are separate explicit statuses; this repository cannot prove
 physical sealed storage, so the fixture remains `BLOCKED` unless an external
 review artifact verifies that boundary. RPT-04 is not promotion or live-trading
 authorization.
+
+`buildExecutionCostAndSlippageReport` in `src/research/evidence-reports.ts` is the
+RPT-05 deterministic execution-cost package. It uses the repository's
+`ExecutionCostModel`, `LatencyProfile`, and deterministic execution abstractions
+to model explicit fee/slippage cost, spread, latency/staleness, and supported
+partial-fill/reject outcomes in `READ_ONLY_NON_LIVE` scope. It binds campaign,
+input, result, and evidence hashes to lineage metadata, emits `COMPLETED`,
+`FAIL`, or `BLOCKED`, and exposes unsupported-realism blockers such as
+`LIVE_AUTHORITY_NOT_SUPPORTED`, `UNKNOWN_IN_FLIGHT_OUTCOME_UNSUPPORTED`, and
+`STALE_LATENCY_OUTCOME_UNSUPPORTED` without granting live bridge authority.

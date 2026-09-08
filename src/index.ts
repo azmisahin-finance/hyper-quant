@@ -1,8 +1,9 @@
 /**
  * HYPER-QUANT implementation entrypoint.
  *
- * v2.9 is a review candidate. The repository contains a hardened, non-live
- * safety/reconciliation scaffold; no venue adapter or signing capability exists.
+ * v2.9 is a review candidate. The repository contains a hardened safety kernel,
+ * a read-oriented BtcTurk spot adapter, immutable event capture, and deterministic replay.
+ * Live mutation still requires an external mutation gateway and signer boundary.
  */
 export const HYPER_QUANT_SPEC_STATUS = 'REVIEW_REQUIRED' as const;
 export const HYPER_QUANT_SPEC_VERSION = '2.9' as const;
@@ -22,3 +23,9 @@ export * from './risk/exposure-engine.js';
 export * from './risk/promotion-policy.js';
 export * from './release/capability-parity.js';
 export * from './release/chaos-contract.js';
+
+export * from './venues/types.js';
+export * from './venues/btcturk-http.js';
+export * from './venues/btcturk-spot-adapter.js';
+export * from './data/immutable-event-log.js';
+export * from './replay/replay-engine.js';

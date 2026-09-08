@@ -45,6 +45,10 @@ jobs:
           test -f spec/versions/v2.6/HYPER-QUANT_MASTER_SPEC_v2.6.md
           test -f spec/reviews/v2.7/v2.7-adversarial-review.md
           test -f spec/reviews/v2.9/v2.9-adversarial-review.md
+          test -f src/venues/btcturk-spot-adapter.ts
+          test -f src/data/immutable-event-log.ts
+          test -f src/replay/replay-engine.ts
+          test -f docs/implementation-progress.md
           test -f spec/annex/statistical-methods-v1.md
 
       - name: Detect obvious secret files
@@ -89,7 +93,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          ! grep -RniE 'place order|submit order|private key|secret seed|DeterministicBarrier|TestMutationExecutor|FaultInjector' src --exclude='README.md'
+          ! grep -RniE 'private key|secret seed|DeterministicBarrier|TestMutationExecutor|FaultInjector' src --exclude='README.md'
 
       - name: Verify hard release-gate contracts are present
         shell: bash

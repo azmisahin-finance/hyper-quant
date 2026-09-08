@@ -10,7 +10,7 @@ The repository is intentionally usable as a starting point for a new engineer, b
 
 Current candidate specification:
 
-`spec/versions/v2.8/HYPER-QUANT_MASTER_SPEC_v2.8.md`
+`spec/versions/v2.9/HYPER-QUANT_MASTER_SPEC_v2.9.md`
 
 Current status:
 
@@ -63,3 +63,7 @@ When evidence is insufficient, stop at `REVIEW_REQUIRED` rather than inventing a
 ## v2.8 implementation boundary
 
 The current scaffold implements a hardened local deterministic safety contract plus intent/reconciliation primitives. It does not submit orders, sign payloads, connect credentials, or access a production venue. `DeterministicBarrier` and test mutation executors are test-only and remain outside production builds. The durable journal is a repository-level primitive; venue/database/filesystem production proof remains outstanding.
+
+## v2.9 Phase-2/4 implementation boundary
+
+The repository now contains a BtcTurk spot adapter for documented public endpoints and authenticated read endpoints, plus immutable hash-chained event capture and deterministic replay. Live order submission/cancellation is deliberately rejected at the adapter boundary until the canonical MutationCoordinator, an external signer/auth boundary, and an explicit mutation gateway are wired together. No production secret or concrete signer is stored in this repository.

@@ -14,3 +14,7 @@ The test-only `DeterministicBarrier` and mutation executor live under `tests/adv
 The broader suite shall eventually include deterministic unit tests, property/invariant tests, replay/backtest reproducibility, venue-adapter contracts, partial-fill and reconciliation tests, kill-switch tests, repeated-loss escalation, research-trial registration, AI isolation, upper-plane chaos, statistical validation, and canary safety tests.
 
 No production promotion should rely solely on happy-path tests.
+
+-  — deterministic shadow/paper execution boundary tests.
+
+- `paper-execution.test.ts` — deterministic paper execution boundary tests.

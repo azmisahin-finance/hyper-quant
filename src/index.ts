@@ -59,3 +59,5 @@ export * from './execution/resting-order-book.js';
 export * from './execution/latency-model.js';
 export * from './execution/impact-model.js';
 export * from './execution/shadow-execution.js';
+
+export * from './execution/paper-execution.js';

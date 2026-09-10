@@ -8,8 +8,8 @@ executing it.
 ## Current project state
 
 - Repository: `azmisahin-finance/hyper-quant`
-- Upstream baseline: `main` at `61a5aceb4ae33b4b8833bfcf743bb1ae3b3834b1`
-- Current workspace branch: `codex/productization-m1-paper-bot`
+- Upstream baseline: `main` at `170e4049974af83dcd98d4f86b995e8511d1854d`
+- Current workspace branch: `main`
 - Spec version: `v2.9`
 - Review status: `REVIEW_REQUIRED`
 - Live trading status: `PROHIBITED`
@@ -18,17 +18,18 @@ executing it.
 
 ## Current objective
 
-Complete the M1 Paper Bot Vertical Slice for BtcTurk `BTC/TRY`: flow a
-read-only market snapshot through a deterministic strategy, risk decision,
-paper order, simulated fill, simulated position/PnL, event record, and operator
-status. Preserve the review gate and prohibit every live-capital, credential,
+Define the M2 Paper Operations Evidence contract and its preconditions while
+preserving the review gate and prohibiting every live-capital, credential,
 signer, and venue-mutation path.
+
+M1 Paper Bot Vertical Slice is implemented and merged. Future agents must
+continue from the M2 evidence contract rather than restart M1 planning or
+re-implement the M1 vertical slice.
 
 ## Completion status
 
-- [x] Re-check repository access: GitHub read access succeeds, but the linked
-  GitHub App rejects ref creation with `403 Resource not accessible by
-  integration`; remote writes are unavailable in this session.
+- [x] Re-check repository access and establish the repository's current
+  review-stage, non-live operating boundary.
 - [x] Establish `docs/productization-master-plan.md` as the authoritative
   product sequencing and M1 acceptance record.
 - [x] Update README, agent instructions, runbook, and source documentation so
@@ -38,45 +39,57 @@ signer, and venue-mutation path.
   position/PnL, event log, operator status, and session hash.
 - [x] Add M1 integration tests for the full simulated flow, risk rejection,
   and deterministic replay.
-- [x] Run `npm run check`, `npm test`, and `npm run agent:status` on this branch.
+- [x] Run `npm run check`, `npm test`, and `npm run agent:status` for M1.
 - [x] Commit the M1 implementation and documentation as
   `e1aa7cc` (`feat: establish M1 paper-only product vertical slice`).
-- [x] Create and verify a real complete-history bundle at
-  `outputs/hyper-quant-productization-m1-paper-bot.bundle`; it contains local
-  `main` at `61a5ace` and the M1 branch at `e1aa7cc`.
-- [x] Publish the validated branch to
-  `origin/codex/productization-m1-paper-bot`; do not force-push or rewrite
-  history.
-- [ ] Open a human-reviewed pull request from
-  `codex/productization-m1-paper-bot` to `main` before any merge.
+- [x] Create and verify the complete-history M1 bundle.
+- [x] Publish the M1 branch without rewriting history.
+- [x] Open pull request #9 for M1.
+- [x] Merge pull request #9 into `main`.
+- [x] Delete the merged M1 feature branch.
+- [x] Verify that `main` contains the M1 merge commit
+  `170e4049974af83dcd98d4f86b995e8511d1854d`.
+- [ ] Define the M2 Paper Operations Evidence contract and explicit
+  preconditions.
+- [ ] Record accountable acceptance criteria for the M2 paper-entry,
+  research, holdout, independent-review, reconciliation, and operational
+  evidence gates.
+- [ ] Validate M2 evidence without introducing any live adapter, signer,
+  credential, capital, or venue-mutation path.
 
 ## Known blockers and non-goals
 
-- The GitHub App integration is authenticated for reads but rejects Git
-  ref/contents writes with `403 Resource not accessible by integration`. The
-  authenticated local Git transport can publish the branch; use it rather than
-  the connector for this session.
 - M1 is an implementation vertical slice, not the `OPS-02` paper-evaluation
-  gate. Research, holdout, independent review, and operations prerequisites
-  remain open.
+  gate. Research, holdout, independent review, reconciliation, and operations
+  prerequisites remain open.
+- M2 must remain blocked until its paper-entry, research, and operational
+  evidence prerequisites have recorded accountable acceptance.
 - Real paper observation, shadow execution, canary, production, signer access,
   credentials, and capital allocation remain out of scope and prohibited.
+- No live adapter may be introduced as part of M2.
+- `PAPER_ONLY` virtual cash, fills, and PnL are deterministic simulations and
+  must never be represented as live performance.
 
 ## Immediate next actions
 
-1. Open a review for the published branch; do not skip M2 evidence gates or add
-   a live adapter.
-2. Keep M2 blocked until its paper-entry, research, and operational evidence
-   prerequisites have a recorded accountable acceptance.
+1. Define the M2 Paper Operations Evidence contract.
+2. Specify each M2 precondition, accountable owner, evidence artifact, acceptance
+   criterion, and fail-closed behavior.
+3. Map the M2 evidence contract to the existing research, risk, execution,
+   reconciliation, and independent-review gates.
+4. Do not add a live adapter, signer, credentials, capital path, or venue
+   mutation.
+5. Keep the project in `REVIEW_REQUIRED` / `NON_LIVE` / `PAPER_ONLY`.
 
 ## Last validated baseline
 
-- Upstream `main` before this branch: `npm run check` and `npm test` passed
-  according to the RPT-05 handoff (126 tests, 0 failed).
-- Current M1 branch: `npm run check` passed; `npm test` passed (133 tests, 0
-  failed); `npm run agent:status` reported v2.9 / `REVIEW_REQUIRED` /
-  `PAPER_ONLY` / `PROHIBITED`; `git bundle verify` confirmed a complete
-  history bundle with the M1 branch and `main` refs.
+- M1 validation completed before merge:
+  `npm run check` passed; `npm test` passed with 133 tests and 0 failures;
+  `npm run agent:status` reported v2.9 / `REVIEW_REQUIRED` /
+  `PAPER_ONLY` / `PROHIBITED`.
+- PR #9 merged successfully into `main`.
+- Current `main` merge commit:
+  `170e4049974af83dcd98d4f86b995e8511d1854d`.
 
 ## Handoff template
 
@@ -95,3 +108,7 @@ signer, and venue-mutation path.
   no live order submission, and no implicit approval of capital deployment.
 - `PAPER_ONLY` virtual cash, fills, and PnL are deterministic simulations. They
   must never be reported as live performance or capital allocation.
+- Future agents must read `AGENTS.md`, `docs/productization-master-plan.md`,
+  and this status ledger before beginning work.
+- Future agents must continue from the first unchecked eligible item rather
+  than restarting product planning.

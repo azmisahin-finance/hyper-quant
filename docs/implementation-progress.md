@@ -25,6 +25,10 @@
   spread/slippage, latency/staleness, reject, partial-fill, and unsupported
   real-world blocker outcomes to campaign/input/result/evidence hashes and
   lineage metadata without claiming live authority
+- M1 paper-only product vertical slice: read-only market snapshot, deterministic
+  strategy/signal, bounded simulated risk, paper order/fill, position/PnL,
+  event record, and operator status; no credential, signer, live mutation, or
+  capital capability
 
 ### Remaining proof obligations
 
@@ -49,6 +53,13 @@ physical sealed-holdout isolation, and independent external DSR validation are
 still open proof obligations.
 
 No live mutation is authorized by this implementation.
+
+## Productization boundary
+
+`docs/productization-master-plan.md` fixes the product sequence. M1 provides a
+deterministic implementation surface for a zero-capital paper bot, but it does
+not close research, paper-entry, shadow, or release gates. M2 remains blocked
+until the governed evidence prerequisites are satisfied.
 
 ## v2.9 research campaign orchestration
 

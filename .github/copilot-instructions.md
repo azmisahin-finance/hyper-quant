@@ -19,6 +19,10 @@ This repository is a review-stage quantitative research and execution-safety pro
 4. Update docs only when the change changes behavior, risk, or operating expectations.
 5. Leave a resumable handoff with status, blockers, and next steps.
 
+For product work, read `docs/productization-master-plan.md` before choosing a
+scope. M1 is `PAPER_ONLY`; virtual balances and paper fills are never live
+capital, venue authority, or promotion evidence.
+
 ## Safety and governance rules
 
 - No secrets, credentials, API keys, seeds, or live exchange artifacts in the repo.

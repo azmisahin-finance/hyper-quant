@@ -18,6 +18,18 @@ The v2.7 specification remains preserved as the prior review artifact.
 
 The `spec/master/` directory will contain the approved canonical master only after the review matrix, document identity, Definition of Done, and independent adversarial review all close successfully.
 
+## Productization track
+
+The current product decision is to deliver a useful, zero-capital paper product
+without waiting to claim a production-ready platform. M1 is a deterministic
+`BTC/TRY` paper-bot vertical slice: read-only market input, strategy signal,
+risk decision, paper order/fill, simulated position and PnL, event record, and
+operator status. It is strictly `PAPER_ONLY`; live trading remains
+`PROHIBITED`.
+
+The authoritative sequencing and acceptance criteria are in
+[`docs/productization-master-plan.md`](docs/productization-master-plan.md).
+
 ## What this project is
 
 HYPER-QUANT is a quantitative research and execution platform rather than a single trading bot. Its design covers:
@@ -49,6 +61,8 @@ Key files:
   decision rights, escalation, and AI autonomy boundaries.
 - `docs/stakeholder-master-execution-plan.md` — canonical stakeholder roadmap,
   task register, proof obligations, phase gates, reporting, and handoff rules.
+- `docs/productization-master-plan.md` — authoritative product sequencing from
+  M1 paper-only capability to future evidence gates.
 - `docs/agent-status.md` — active handoff and resumable state ledger.
 - `scripts/agent-status.mjs` — deterministic status command for current repo health and next actions.
 
@@ -157,4 +171,9 @@ HYPER-QUANT is software and research infrastructure, not financial advice. Tradi
 
 ## Implementation status
 
-The TypeScript scaffold is intentionally non-trading and non-signing while the specification remains under review. The current v2.9 implementation includes a deterministic market-data/replay path and a non-live research backtest harness. No exchange order submission is implemented in this repository scaffold.
+The TypeScript scaffold is intentionally non-signing and contains no exchange
+order submission path. The current v2.9 implementation includes deterministic
+market-data/replay, research/backtest, and M1 paper-bot components. The paper
+bot consumes only read-only input and produces simulated orders, fills,
+positions, PnL, event records, and operator status; it does not access live
+capital, credentials, a signer, or a mutation gateway.

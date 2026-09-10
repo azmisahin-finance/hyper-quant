@@ -69,3 +69,5 @@ export * from './execution/venue-convergence.js';
 export * from './data/btcturk-ws-session.js';
 export * from './data/btcturk-private-ws.js';
 export * from './data/btcturk-private-session.js';
+
+export * from './product/paper-bot.js';

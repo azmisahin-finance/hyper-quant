@@ -12,7 +12,8 @@ post-operation checklist are defined in
 
 - Spec status: `REVIEW_REQUIRED`
 - Spec version: `v2.9`
-- Implementation status: non-live research and safety scaffold
+- Implementation status: non-live research/safety scaffold plus M1 paper-only
+  product vertical slice
 - Production live trading: prohibited in this repo
 - Required review gate: independent adversarial review before production approval
 
@@ -30,7 +31,8 @@ Any AI agent may help with coding, analysis, and validation only within the revi
 For every task, do the following in order:
 
 1. Confirm the objective and the affected scope.
-2. Read the status, branch, and the minimum relevant files.
+2. Read `docs/productization-master-plan.md`, the status, branch, and the
+   minimum relevant files.
 3. Identify whether the task affects one of these domains: research, execution safety, venue integration, docs, governance, or release.
 4. Apply the narrowest valid fix.
 5. Validate with the existing repo checks.
@@ -155,6 +157,8 @@ The project currently has:
 - deterministic safety tests
 - read-only venue adapter scaffold
 - immutable event log and replay system
+- M1 `PAPER_ONLY` bot flow with simulated fills, position/PnL, event record,
+  and operator status
 - no live mutation authorization
 
 Open proof obligations are tracked in `docs/implementation-progress.md` and must remain visible to all agents.

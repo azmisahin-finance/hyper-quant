@@ -39,7 +39,11 @@ signer, and venue-mutation path.
 - [x] Add M1 integration tests for the full simulated flow, risk rejection,
   and deterministic replay.
 - [x] Run `npm run check`, `npm test`, and `npm run agent:status` on this branch.
-- [ ] Create and preserve a real Git bundle from this branch after validation.
+- [x] Commit the M1 implementation and documentation as
+  `e1aa7cc` (`feat: establish M1 paper-only product vertical slice`).
+- [x] Create and verify a real complete-history bundle at
+  `outputs/hyper-quant-productization-m1-paper-bot.bundle`; it contains local
+  `main` at `61a5ace` and the M1 branch at `e1aa7cc`.
 - [ ] Publish the branch/PR when a GitHub write-capable credential or connector
   is available; do not force-push or rewrite history.
 
@@ -56,11 +60,10 @@ signer, and venue-mutation path.
 
 ## Immediate next actions
 
-1. Review the final diff for accidental live authority, secrets, or gate
-   weakening; then commit the local branch.
-2. Create a genuine `.bundle` from the commit and verify it with Git.
-3. Once write authority exists, publish this exact branch and open a review; do
+1. Once write authority exists, publish this exact branch and open a review; do
    not skip M2 evidence gates or add a live adapter.
+2. Keep M2 blocked until its paper-entry, research, and operational evidence
+   prerequisites have a recorded accountable acceptance.
 
 ## Last validated baseline
 
@@ -68,7 +71,8 @@ signer, and venue-mutation path.
   according to the RPT-05 handoff (126 tests, 0 failed).
 - Current M1 branch: `npm run check` passed; `npm test` passed (133 tests, 0
   failed); `npm run agent:status` reported v2.9 / `REVIEW_REQUIRED` /
-  `PAPER_ONLY` / `PROHIBITED`.
+  `PAPER_ONLY` / `PROHIBITED`; `git bundle verify` confirmed a complete
+  history bundle with the M1 branch and `main` refs.
 
 ## Handoff template
 

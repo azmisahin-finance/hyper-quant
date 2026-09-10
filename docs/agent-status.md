@@ -1,57 +1,76 @@
 # Agent Status Ledger
 
-This file is the resumable operational state for AI agents and operators. Update it whenever work is paused, resumed, or completed.
+This file is the resumable operational state for AI agents and operators. Update
+it whenever work is paused, resumed, or completed. The current work item is the
+first unchecked item below; do not restart a planning exercise instead of
+executing it.
 
 ## Current project state
 
 - Repository: `azmisahin-finance/hyper-quant`
-- Current branch: `azmisahin-rpt-04-holdout-certificate`
+- Upstream baseline: `main` at `61a5aceb4ae33b4b8833bfcf743bb1ae3b3834b1`
+- Current workspace branch: `codex/productization-m1-paper-bot`
 - Spec version: `v2.9`
 - Review status: `REVIEW_REQUIRED`
 - Live trading status: `PROHIBITED`
-- Agent execution scope: `non-live review and development only`
+- Product mode: `PAPER_ONLY` / `SIMULATED_ONLY`
+- Agent execution scope: non-live review and development only
 
 ## Current objective
 
-Implement the RPT-05 deterministic execution-cost and slippage evidence for
-BtcTurk `BTC/TRY` in `READ_ONLY_NON_LIVE` scope, preserving review status and
-non-live authority boundaries.
+Complete the M1 Paper Bot Vertical Slice for BtcTurk `BTC/TRY`: flow a
+read-only market snapshot through a deterministic strategy, risk decision,
+paper order, simulated fill, simulated position/PnL, event record, and operator
+status. Preserve the review gate and prohibit every live-capital, credential,
+signer, and venue-mutation path.
 
 ## Completion status
 
-- [x] Review the repository structure and current readiness
-- [x] Confirm repo status and validation baseline
-- [x] Create repo-level AI instructions (`AGENTS.md`, `.github/copilot-instructions.md`)
-- [x] Create the agent runbook and operational boundaries
-- [x] Add a deterministic repo status/script for future agents
-- [x] Add the multi-perspective specification governance and operating model
-- [x] Serialize same-path research ledger writers and persist DSR convention
-- [x] Add canonical stakeholder master execution plan, GOV-01..GOV-12 register,
-  phase gates, role responsibilities, reporting cadence, and handoff checklist
-- [x] Add the RPT-01/RPT-02 deterministic report contract and fixture runner
-- [x] Add RPT-03 independent DSR/PSR recomputation, derived trial count,
-  persisted convention, deterministic lineage, and explicit outcomes
-- [x] Add RPT-04 deterministic holdout selection, campaign binding, lineage
-  hashes, mutation/leakage checks, and explicit isolation outcomes
-- [x] Add RPT-05 deterministic execution-cost and slippage evidence with
-  explicit support/unsupported-realism blockers in read-only non-live scope
-- [ ] Obtain independent human/adversarial review before any production claim
+- [x] Re-check repository access: GitHub read access succeeds, but the linked
+  GitHub App rejects ref creation with `403 Resource not accessible by
+  integration`; remote writes are unavailable in this session.
+- [x] Establish `docs/productization-master-plan.md` as the authoritative
+  product sequencing and M1 acceptance record.
+- [x] Update README, agent instructions, runbook, and source documentation so
+  future operators start from the productization decision.
+- [x] Implement `DeterministicPaperBot` with a narrow read-only source,
+  deterministic signal/risk flow, existing paper executor, virtual-only
+  position/PnL, event log, operator status, and session hash.
+- [x] Add M1 integration tests for the full simulated flow, risk rejection,
+  and deterministic replay.
+- [x] Run `npm run check`, `npm test`, and `npm run agent:status` on this branch.
+- [ ] Create and preserve a real Git bundle from this branch after validation.
+- [ ] Publish the branch/PR when a GitHub write-capable credential or connector
+  is available; do not force-push or rewrite history.
 
-## Last validated baseline
+## Known blockers and non-goals
 
-- `npm run check` — passed
-- `npm test` — passed (126 tests, 0 failed)
+- The GitHub integration is authenticated for reads but lacks Git ref/contents
+  write authority in this session. This is an integration permission block, not
+  evidence of repository permission.
+- M1 is an implementation vertical slice, not the `OPS-02` paper-evaluation
+  gate. Research, holdout, independent review, and operations prerequisites
+  remain open.
+- Real paper observation, shadow execution, canary, production, signer access,
+  credentials, and capital allocation remain out of scope and prohibited.
 
 ## Immediate next actions
 
-1. Obtain independent review of the RPT-05 cost-stress contract and fixture outputs.
-2. Obtain external evidence before claiming physical sealed-holdout isolation.
-3. Keep this ledger updated whenever work continues.
-4. Use `node scripts/agent-status.mjs` as the default status command for the next agent.
+1. Review the final diff for accidental live authority, secrets, or gate
+   weakening; then commit the local branch.
+2. Create a genuine `.bundle` from the commit and verify it with Git.
+3. Once write authority exists, publish this exact branch and open a review; do
+   not skip M2 evidence gates or add a live adapter.
+
+## Last validated baseline
+
+- Upstream `main` before this branch: `npm run check` and `npm test` passed
+  according to the RPT-05 handoff (126 tests, 0 failed).
+- Current M1 branch: `npm run check` passed; `npm test` passed (133 tests, 0
+  failed); `npm run agent:status` reported v2.9 / `REVIEW_REQUIRED` /
+  `PAPER_ONLY` / `PROHIBITED`.
 
 ## Handoff template
-
-Use the following format when handing work to another agent:
 
 - Objective:
 - Current status:
@@ -64,7 +83,7 @@ Use the following format when handing work to another agent:
 
 ## Notes
 
-- This repository is intentionally conservative: no production signer access, no live order submission, and no implicit approval of capital deployment.
-- Any future change that approaches live-capital or signer ownership must be escalated to a human decision-maker.
-- Current plan delivery is documentation-only; it does not authorize live
-  trading, real capital, signer access, or production deployment.
+- This repository is intentionally conservative: no production signer access,
+  no live order submission, and no implicit approval of capital deployment.
+- `PAPER_ONLY` virtual cash, fills, and PnL are deterministic simulations. They
+  must never be reported as live performance or capital allocation.

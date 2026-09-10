@@ -14,4 +14,13 @@ Expected implementation boundaries include:
 - safety/execution kernel,
 - audit/event infrastructure.
 
+## M1 product slice
+
+`product/paper-bot.ts` composes a read-only market snapshot, deterministic
+strategy decision, bounded simulated risk check, the existing paper executor,
+position/PnL accounting, an event record, and operator status. It is
+permanently `PAPER_ONLY`: it has no credential, signer, live-order, or
+capital-mutation surface. See `docs/productization-master-plan.md` for its
+acceptance boundary.
+
 Production signer access must remain isolated from research and AI processes. BtcTurk mutation requires an externally supplied signer/auth boundary and mutation gateway; no private key implementation exists in this repository.

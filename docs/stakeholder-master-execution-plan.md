@@ -101,6 +101,16 @@ remain conditional on human approval and all proof obligations.
 Every phase must produce an immutable or hash-addressed artifact, a decision
 record, an owner, reviewers, unresolved blockers, and a named next state.
 
+### Productization decision
+
+The engineering path now starts with a usable zero-capital M1 paper-bot vertical
+slice while research and proof obligations continue in parallel. Its fixed flow
+is read-only market input → deterministic strategy → risk decision → paper
+order/fill → simulated position/PnL → event record → operator status. M1 is an
+implementation capability, not evidence that a candidate may enter the
+`OPS-02` paper-evaluation phase. The authoritative M1 acceptance contract and
+subsequent sequence are in `docs/productization-master-plan.md`.
+
 ## 4. Master task register
 
 Status vocabulary: `DONE` means evidence-backed and accepted; `PARTIAL` means
@@ -128,6 +138,7 @@ not closed; `BLOCKED` means a prerequisite or human decision prevents work;
 | RES-04 | P1 | Quant | RES-02, RES-03 | OOS/walk-forward, purge, embargo, negative controls | Candidate survives declared statistical protocol | validation dossier | Candidate remains research-only otherwise | PARTIAL |
 | RES-05 | P1 | Quant / Risk | RES-04, GOV-06, GOV-07 | campaign, holdout, evidence package | Promotion state is deterministic and traceable | candidate decision record | Only `PROMOTE_CANDIDATE` may enter paper | PARTIAL |
 | OPS-01 | P1 | Ops / Security | GOV-04 | access inventory, redacted logs, backup/restore, incident drills | Operations can detect, stop, restore, and preserve evidence | operations readiness pack | Blocks shadow | OPEN |
+| M1-01 | P0 | Product / Sr Eng | v2.9 safety boundary | deterministic tests, event/session hashes, operator status | Read-only data flows through strategy, risk, paper executor, simulated PnL, and status without a live capability | paper-only product vertical slice | Does not satisfy OPS-02 or permit capital | PARTIAL |
 | OPS-02 | P1 | Execution / Trader | OPS-01, RES-05 | paper fills, latency, slippage, drift, incident log | Frozen candidate meets paper acceptance without capital | paper evaluation report | Failure returns to research | OPEN |
 | OPS-03 | P0 | Execution / Risk | OPS-02, GOV-09, GOV-11 | read-only shadow observations and reconciliation | Shadow demonstrates control parity and stop behavior | shadow readiness/exit record | No canary proposal otherwise | OPEN |
 | REL-01 | P0 | Architect / Security / Risk | GOV-12, OPS-03 | bounded allocation, rollback, expiry, human approval | Canary is explicitly approved and externally controlled | canary proposal | Not executable from this repo | PROHIBITED |

@@ -44,14 +44,18 @@ signer, and venue-mutation path.
 - [x] Create and verify a real complete-history bundle at
   `outputs/hyper-quant-productization-m1-paper-bot.bundle`; it contains local
   `main` at `61a5ace` and the M1 branch at `e1aa7cc`.
-- [ ] Publish the branch/PR when a GitHub write-capable credential or connector
-  is available; do not force-push or rewrite history.
+- [x] Publish the validated branch to
+  `origin/codex/productization-m1-paper-bot`; do not force-push or rewrite
+  history.
+- [ ] Open a human-reviewed pull request from
+  `codex/productization-m1-paper-bot` to `main` before any merge.
 
 ## Known blockers and non-goals
 
-- The GitHub integration is authenticated for reads but lacks Git ref/contents
-  write authority in this session. This is an integration permission block, not
-  evidence of repository permission.
+- The GitHub App integration is authenticated for reads but rejects Git
+  ref/contents writes with `403 Resource not accessible by integration`. The
+  authenticated local Git transport can publish the branch; use it rather than
+  the connector for this session.
 - M1 is an implementation vertical slice, not the `OPS-02` paper-evaluation
   gate. Research, holdout, independent review, and operations prerequisites
   remain open.
@@ -60,8 +64,8 @@ signer, and venue-mutation path.
 
 ## Immediate next actions
 
-1. Once write authority exists, publish this exact branch and open a review; do
-   not skip M2 evidence gates or add a live adapter.
+1. Open a review for the published branch; do not skip M2 evidence gates or add
+   a live adapter.
 2. Keep M2 blocked until its paper-entry, research, and operational evidence
    prerequisites have a recorded accountable acceptance.
 
